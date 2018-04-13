@@ -127,8 +127,6 @@ program
 
 program
     .command('update')
-    .option('-o, --org [organisatio name]', 'Name of organisation or user that owns the repo')
-    .option('-r, --repo [repository name]', 'Name of repository you want to release too')
     .action(async (options) => {
         const getReleaseDetails = await prompt(updateLatestReleaseQuestions);
         const { repo, org, approved, scheduled, changeLog } = getReleaseDetails;
