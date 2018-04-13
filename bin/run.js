@@ -79,13 +79,9 @@ const updateLatestReleaseQuestions = [
     }
 ];
 
-
-
 program
     .version('0.1.0')
     .command('latest')
-    .option('-o, --org [organisatio name]', 'Name of organisation or user that owns the repo')
-    .option('-r, --repo [repository name]', 'Name of repository you want to release too')
     .action(async () => {
         const userDetails = {
             username: process.env.GIT_USERNAME,
@@ -117,7 +113,7 @@ program
 
         const { repo, org, version, approved, scheduled, changeLog } = getReleaseDetails; 
 
-        if(!changeLog) console.log('Please specify a change log file')
+        if(!changeLog) console.log('Please specify a changelog file')
         if(!userDetails.username) console.log('Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username')
         if(!userDetails.accessToken) console.log('Please set the variable GIT_ACCESS_TOKEN in your terminal. e.g export GIT_ACCESS_TOKEN=accessToken')
         if(!repo) console.log('Please specify repository');
