@@ -2,6 +2,8 @@
 
 ## Setup
 
+npm install or yarn to get the dependencies
+
 npm link to test locally
 
 Export the following variables in your shell of choice:
