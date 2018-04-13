@@ -14,10 +14,7 @@ const latestRelease = async (userDetails, repo, org) => {
 
 const newRelease = async (userDetails, repo, org, changeLogPath) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
-
     const changeLogContents = fs.readFileSync(changeLogPath, 'utf8').toString();
-
-    console.log(changeLogContents);
 
     var releaseDetails = {
         "tag_name": "v1.0.3",
@@ -25,7 +22,7 @@ const newRelease = async (userDetails, repo, org, changeLogPath) => {
         "name": "v1.0.3",
         "body": changeLogContents,
         "draft": false,
-        "prerelease": false
+        "prerelease": true
     };
 
     let response = await request
