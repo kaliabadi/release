@@ -1,0 +1,13 @@
+{
+    "name": "release",
+    "version": "0.1.0",
+    "bin": {
+        "release": "bin/run.js"
+    },
+    "dependencies": {
+        "commander": "^2.15.1",
+        "superagent": "^3.8.2"
+    },
+    "author": "News UK & Ireland Ltd",
+    "license": "BSD-3-Clause"
+}
