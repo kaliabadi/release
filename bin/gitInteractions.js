@@ -49,7 +49,7 @@ const updateRelease = async (userDetails, repo, org) => {
             "name": "v1.0.1",
             "body": "Patched release",
             "draft": false,
-            "prerelease": false
+            "prerelease": true
         });
     
     return response.body;
