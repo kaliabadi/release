@@ -6,6 +6,7 @@
     },
     "dependencies": {
         "commander": "^2.15.1",
+        "inquirer": "^5.2.0",
         "superagent": "^3.8.2"
     },
     "author": "News UK & Ireland Ltd",

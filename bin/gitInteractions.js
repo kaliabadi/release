@@ -12,17 +12,24 @@ const latestRelease = async (userDetails, repo, org) => {
     return response.body;
 };
 
-const newRelease = async (userDetails, repo, org, changeLogPath) => {
+const newRelease = async (userDetails, repo, org, changeLogPath, version, approved, scheduled) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
     const changeLogContents = fs.readFileSync(changeLogPath, 'utf8').toString();
+    const preReleaseValue = approved ? false : true;
+    const releaseBody = `   Release has been scheduled for: ${scheduled}
+    
+    This release has been approved by the PO: ${preReleaseValue}
+
+    ${changeLogContents}
+    `
 
     var releaseDetails = {
-        "tag_name": "v1.0.3",
+        "tag_name": version,
         "target_commitish": "master",
-        "name": "v1.0.3",
+        "name": version,
         "body": changeLogContents,
         "draft": false,
-        "prerelease": true
+        "prerelease": preReleaseValue
     };
 
     let response = await request
@@ -33,23 +40,26 @@ const newRelease = async (userDetails, repo, org, changeLogPath) => {
     return response.body;
 }
 
-const updateRelease = async (userDetails, repo, org) => {
+const updateRelease = async (userDetails, repo, org, approved, scheduled, changeLogPath) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
-
-    const latestReleaseBody = await latestRelease(userDetails, repo, org);
+    const latestReleaseResponse = await latestRelease(userDetails, repo, org);
+    const preReleaseValue = approved ? false : true;
+    const changeLogContents = fs.readFileSync(changeLogPath, 'utf8').toString();
+    const releaseBody = `   Release has been scheduled for: ${scheduled}
     
-    console.log(latestReleaseBody);
+This release has been approved by the PO: ${preReleaseValue}
+
+------------------------------------------------------------------------------------
+
+${changeLogContents}
+    `
 
     const response = await request
-        .patch(`https://api.github.com/repos/${org}/${repo}/releases/${latestReleaseBody.id}`)
+        .patch(`https://api.github.com/repos/${org}/${repo}/releases/${latestReleaseResponse.id}`)
         .set('Authorization', authDetails)
         .send({
-            "tag_name": "v1.0.2",
-            "target_commitish": "master",
-            "name": "v1.0.1",
-            "body": "Patched release",
-            "draft": false,
-            "prerelease": true
+            "body": releaseBody,
+            "prerelease": preReleaseValue
         });
     
     return response.body;
