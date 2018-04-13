@@ -11,5 +11,6 @@
 
 ##### New Features
 
+*  using inquirer instead of commander options for a better user experience (122c938b)
 *  basic CLI for interacting with github releases (2ab77639)
 

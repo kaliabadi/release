@@ -1,6 +1,6 @@
 # release
 
-##Setup
+## Setup
 
 npm link to test locally
 
@@ -12,7 +12,7 @@ Export the following variables in your shell of choice:
 Now you are ready to go
 
 
-##Run
+## Run
 
 Three main commands at this point:
 
