@@ -19,8 +19,6 @@ const getUserDetails = () => validateUserDetails({
 program
     .version('0.1.0')
     .command('latest')
-    .option('-o, --org [organisation name]', 'Name of organisation or user that owns the repo')
-    .option('-r, --repo [repository name]', 'Name of repository you want to release too')
     .action(latestReleaseAction(getUserDetails()));
 
 program

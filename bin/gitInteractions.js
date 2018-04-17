@@ -1,8 +1,8 @@
 const request = require('superagent');
 const fs = require('fs');
+const { generateBodyContent } = require('../contentConstruction');
 
 const latestRelease = async (userDetails, {repo, org}) => {
-    
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
     
     let response = await request
@@ -24,12 +24,9 @@ const readFileAsString = (file) => {
 const newRelease = async (userDetails, {repo, org, changeLog, version, approved, scheduled}) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
     const changeLogContents = readFileAsString(changeLog);
-    const releaseBody = `   Release has been scheduled for: ${scheduled}
-    
-    This release has been approved by the PO: ${approved}
+    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
 
-    ${changeLogContents}
-    `
+    console.log(releaseBody)
 
     var releaseDetails = {
         "tag_name": version,
@@ -55,14 +52,7 @@ const updateRelease = async (userDetails, {repo, org, approved, scheduled, chang
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
     const latestReleaseResponse = await latestRelease(userDetails, {repo, org});
     const changeLogContents = readFileAsString(changeLog);
-    const releaseBody = `   Release has been scheduled for: ${scheduled}
-    
-This release has been approved by the PO: ${approved}
-
-------------------------------------------------------------------------------------
-
-${changeLogContents}
-    `
+    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents)
 
     try{
         const response = await request

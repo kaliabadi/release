@@ -45,5 +45,6 @@ module.exports = (userDetails) => async() => {
     
     await newRelease(userDetails, getReleaseDetails);
 
-    console.log(`A new release has been publised! 🎉 Go to https://github.com/${org}/${repo}/releases to see the details`);
+    console.log(`A new release has been publised! 🎉
+Go to https://github.com/${org}/${repo}/releases to see the details`);
 };
