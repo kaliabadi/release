@@ -27,8 +27,6 @@ program
 
 program
     .command('update')
-    .option('-o, --org [organisatio name]', 'Name of organisation or user that owns the repo')
-    .option('-r, --repo [repository name]', 'Name of repository you want to release too')
     .action(updateReleaseAction(getUserDetails()));
 
 program.parse(process.argv)
