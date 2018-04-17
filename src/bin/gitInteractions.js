@@ -1,6 +1,6 @@
-const request = require('superagent');
-const fs = require('fs');
-const { generateBodyContent } = require('../contentConstruction');
+import request from 'superagent';
+import fs from 'fs';
+import { generateBodyContent } from '../contentConstruction';
 
 const latestRelease = async (userDetails, {repo, org}) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
