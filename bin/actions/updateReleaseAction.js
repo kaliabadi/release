@@ -39,6 +39,6 @@ module.exports = (userDetails) => async () => {
 
     const updateReleaseResponse = await updateRelease(userDetails, getReleaseDetails);
 
-    console.log(`The release notes for ${updateReleaseResponse.name} has been updated! \n` +
+    console.log(`The release notes for ${updateReleaseResponse.name} have been updated! \n` +
         `You can see the new release notes here: https://github.com/${org}/${repo}/releases`);
 };
