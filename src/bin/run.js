@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const program = require('commander');
-const latestReleaseAction = require('./actions/latestReleaseAction');
-const newReleaseAction = require('./actions/newReleaseAction');
-const updateReleaseAction = require('./actions/updateReleaseAction');
+import program from 'commander';
+import latestReleaseAction from './actions/latestReleaseAction';
+import newReleaseAction from './actions/newReleaseAction';
+import updateReleaseAction from './actions/updateReleaseAction';
 
 const validateUserDetails = (userDetails) => {
     if(!userDetails.username) throw 'Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username';
@@ -29,4 +29,4 @@ program
     .command('update')
     .action(updateReleaseAction(getUserDetails()));
 
-program.parse(process.argv)
+program.parse(process.argv);

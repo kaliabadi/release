@@ -70,7 +70,7 @@ const updateRelease = async (userDetails, {repo, org, approved, scheduled, chang
 }
 
 
-module.exports = {
+export {
     latestRelease,
     newRelease,
     updateRelease
