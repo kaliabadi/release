@@ -5,6 +5,7 @@ import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
 import generateChangeLog from './generateChangelog';
+import generateChangelog from './generateChangelog';
 
 const validateUserDetails = (userDetails) => {
   if (!userDetails.username) throw new Error('Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username');
@@ -26,16 +27,8 @@ program
 
 program
   .command('new')
-    .option('-p, --patch', 'Release a patch version')
-    .option('-m, --minor', 'Release a minor version')
-    .option('-M, --major', 'Release a major version')
-    .action(async (options) => {
-        const { patch, minor, major } = options
-
-        if(patch) generateChangeLog('patch');
-        if(minor) generateChangeLog('minor');
-        if(major) generateChangeLog('major');
-
+    .action(async () => {
+        generateChangelog();
         await newReleaseAction(getUserDetails())
     });
 

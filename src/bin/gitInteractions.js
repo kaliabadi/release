@@ -1,6 +1,6 @@
 import request from 'superagent';
 import fs from 'fs';
-import mversion from 'mversion';
+import gitTags from 'git-tags';
 import generateBodyContent from '../contentConstruction';
 
 const latestRelease = async (userDetails, { repo, org }) => {
@@ -28,9 +28,14 @@ const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
     const changeLogContents = readFileAsString('./CHANGELOG.md');
     const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
+
     const versionNumber = await new Promise((resolve) => {
-        mversion.get((err, data) => {
-            resolve(data['package.json']);
+        gitTags.get((err, tags) => {
+          if (err) throw err;
+          if(!tags) 
+            console.log('You have not tagged your commit with the release version!')
+
+          resolve(tags[0]);
         })
     });
 
