@@ -1,6 +1,7 @@
 {
     "name": "release",
     "version": "0.1.0",
+    "main": "lib/bin/run.js",
     "bin": {
         "release": "lib/bin/run.js"
     },
@@ -14,7 +15,8 @@
         "babel-preset-env": "^1.6.1"
     },
     "scripts": {
-        "build": "babel src -d lib"
+        "build": "babel src -d lib",
+        "prepublish": "npm run build"
     },
     "author": "News UK & Ireland Ltd",
     "license": "BSD-3-Clause"
