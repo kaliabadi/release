@@ -7,25 +7,25 @@ import updateReleaseAction from './actions/updateReleaseAction';
 import generateChangeLog from './generateChangelog';
 
 const validateUserDetails = (userDetails) => {
-    if(!userDetails.username) throw 'Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username';
-    if(!userDetails.accessToken) throw 'Please set the variable GIT_ACCESS_TOKEN in your terminal. e.g export GIT_ACCESS_TOKEN=accessToken';
-    return userDetails;
+  if (!userDetails.username) throw new Error('Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username');
+  if (!userDetails.accessToken) throw new Error('Please set the variable GIT_ACCESS_TOKEN in your terminal. e.g export GIT_ACCESS_TOKEN=accessToken');
+  return userDetails;
 };
 
 const getUserDetails = () => validateUserDetails({
-    username: process.env.GIT_USERNAME,
-    accessToken: process.env.GIT_ACCESS_TOKEN
+  username: process.env.GIT_USERNAME,
+  accessToken: process.env.GIT_ACCESS_TOKEN,
 });
 
 program
-    .version('0.1.0')
-    .command('latest')
+  .version('0.1.0')
+  .command('latest')
     .action(async () => {
         await latestReleaseAction(getUserDetails())
     });
 
 program
-    .command('new')
+  .command('new')
     .option('-p, --patch', 'Release a patch version')
     .option('-m, --minor', 'Release a minor version')
     .option('-M, --major', 'Release a major version')
@@ -40,9 +40,9 @@ program
     });
 
 program
-    .command('update')
+  .command('update')
     .action(async () => {
-        updateReleaseAction(getUserDetails())
+        await updateReleaseAction(getUserDetails())
     });
 
 program.parse(process.argv);

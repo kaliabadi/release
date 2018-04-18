@@ -2,13 +2,11 @@ import mversion from 'mversion';
 import changeLog from 'generate-changelog'
 import fs from 'fs';
 
-const generateChangeLog = (version) => {
-    mversion.update(version, function (err, data) { });
+export default (version) => {
+    mversion.update(version, () => {});
 
     changeLog.generate({ [version]: true })
-        .then(function (changelog) {
+        .then((changelog) => {
             fs.writeFileSync('./CHANGELOG.md', changelog);
         });
 };
-
-module.exports = generateChangeLog;

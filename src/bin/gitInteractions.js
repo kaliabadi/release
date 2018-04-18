@@ -1,30 +1,32 @@
 import request from 'superagent';
 import fs from 'fs';
 import mversion from 'mversion';
-import { generateBodyContent } from '../contentConstruction';
+import generateBodyContent from '../contentConstruction';
 
-const latestRelease = async (userDetails, {repo, org}) => {
-    const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
-    
-    let response = await request
-        .get(`https://api.github.com/repos/${org}/${repo}/releases/latest`)
-        .set('Authorization', authDetails)
+const latestRelease = async (userDetails, { repo, org }) => {
+  const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
 
-    return response.body;
+  const response = await request
+    .get(`https://api.github.com/repos/${org}/${repo}/releases/latest`)
+    .set('Authorization', authDetails);
+
+  return response.body;
 };
 
-const readFileAsString = (file) => {
-    try{
-        return fs.readFileSync(file, 'utf8').toString();
-    }catch (err) {
-        console.err(`Failed to read the file: ${file}, Error: `, err);
-        return 'No change log provided.'
+const readFileAsString = (filePath) => {
+  if (filePath) {
+    try {
+      return fs.readFileSync(filePath, 'utf8').toString();
+    } catch (err) {
+      console.error(`Failed to read the file: ${filePath}, Error: `, err);
     }
+  }
+  return undefined;
 };
 
 const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
-    const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
     const changeLogContents = readFileAsString('./CHANGELOG.md');
+    const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
     const versionNumber = await new Promise((resolve) => {
         mversion.get((err, data) => {
@@ -35,49 +37,53 @@ const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
     if(!changeLogContents) console.log('❌ No changelog has been found! ❌')
 
     const releaseDetails = {
-        "tag_name": versionNumber,
-        "target_commitish": "master",
-        "name": versionNumber,
-        "body": changeLogContents,
-        "draft": false,
-        "prerelease": !approved
+      "tag_name": versionNumber,
+      target_commitish: 'master',
+      "name": versionNumber,
+      body: releaseBody,
+      draft: false,
+      prerelease: !approved,
     };
 
-    try{
-        let response = await request
-            .post(`https://api.github.com/repos/${org}/${repo}/releases`)
-            .set('Authorization', authDetails)
-            .send(releaseDetails);
-        return response.body;
-    }catch (err){
-        console.error('Bad response from Github: ', err.response.body);
+    try {
+      const response = await request
+        .post(`https://api.github.com/repos/${org}/${repo}/releases`)
+        .set('Authorization', authDetails)
+        .send(releaseDetails);
+      return response.body;
+    } catch (error) {
+      console.error('Bad response from Github: ', error.response.body);
+      return { error };
     }
-}
+};
 
-const updateRelease = async (userDetails, {repo, org, approved, scheduled, changeLog}) => {
-    const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
-    const latestReleaseResponse = await latestRelease(userDetails, {repo, org});
-    const changeLogContents = readFileAsString('./CHANGELOG.md');
-    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents)
+const updateRelease = async (userDetails, {
+  repo, org, approved, scheduled,
+}) => {
+  const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
+  const latestReleaseResponse = await latestRelease(userDetails, { repo, org });
+  const changeLogContents = readFileAsString('./CHANGELOG.md');
+  const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
 
-    try{
-        const response = await request
-            .patch(`https://api.github.com/repos/${org}/${repo}/releases/${latestReleaseResponse.id}`)
-            .set('Authorization', authDetails)
-            .send({
-                "body": releaseBody,
-                "prerelease": !approved
-            });
+  try {
+    const response = await request
+      .patch(`https://api.github.com/repos/${org}/${repo}/releases/${latestReleaseResponse.id}`)
+      .set('Authorization', authDetails)
+      .send({
+        body: releaseBody,
+        prerelease: !approved,
+      });
 
-        return response.body;
-    }catch (err){
-        console.error('Bad response from Github: ', err.response.body);
-    }
-}
+    return response.body;
+  } catch (error) {
+    console.error('Bad response from Github: ', error.response.body);
+    return { error };
+  }
+};
 
 
 export {
-    latestRelease,
-    newRelease,
-    updateRelease
-}
+  latestRelease,
+  newRelease,
+  updateRelease,
+};
