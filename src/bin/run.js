@@ -27,7 +27,7 @@ program
 program
   .command('new')
     .action(async () => {
-        console.log('Remember to tag your commit with the release version first')
+        console.log('Remember to tag your commit with the release version first 🔖')
         generateChangelog();
         await newReleaseAction(getUserDetails())
     });
