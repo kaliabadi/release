@@ -1,4 +1,4 @@
-const generateBodyContent = (scheduled, approved, changeLog) => {
+export default (scheduled, approved, changeLog) => {
   const scheduledContent = scheduled ? `**Release has been scheduled for: ${scheduled}**` : '**No release time has been scheduled at this poing**';
   const changeLogContents = changeLog || '**No change log has been provided for this release**';
 
@@ -13,8 +13,4 @@ const generateBodyContent = (scheduled, approved, changeLog) => {
     ${changeLogContents}
 
     `;
-};
-
-module.exports = {
-  generateBodyContent,
 };

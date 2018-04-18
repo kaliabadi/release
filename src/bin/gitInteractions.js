@@ -1,6 +1,6 @@
 import request from 'superagent';
 import fs from 'fs';
-import { generateBodyContent } from '../contentConstruction';
+import generateBodyContent from '../contentConstruction';
 
 const latestRelease = async (userDetails, { repo, org }) => {
   const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
@@ -13,11 +13,11 @@ const latestRelease = async (userDetails, { repo, org }) => {
 };
 
 const readFileAsString = (filePath) => {
-  if(filePath){
+  if (filePath) {
     try {
       return fs.readFileSync(filePath, 'utf8').toString();
     } catch (err) {
-      console.error(`Failed to read the file: ${file}, Error: `, err);
+      console.error(`Failed to read the file: ${filePath}, Error: `, err);
     }
   }
   return undefined;

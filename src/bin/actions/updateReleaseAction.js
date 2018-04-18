@@ -1,5 +1,5 @@
-const { updateRelease } = require('../gitInteractions');
-const { prompt } = require('inquirer');
+import { prompt } from 'inquirer';
+import { updateRelease } from '../gitInteractions';
 
 const updateLatestReleaseQuestions = [
   {
@@ -29,7 +29,7 @@ const updateLatestReleaseQuestions = [
   },
 ];
 
-module.exports = userDetails => async () => {
+export default userDetails => async () => {
   const getReleaseDetails = await prompt(updateLatestReleaseQuestions);
 
   const { repo, org } = getReleaseDetails;
