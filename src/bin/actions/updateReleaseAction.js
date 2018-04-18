@@ -22,14 +22,9 @@ const updateLatestReleaseQuestions = [
     name: 'scheduled',
     message: 'What is the scheduled release time?',
   },
-  {
-    type: 'input',
-    name: 'changeLog',
-    message: 'What is the path to the project CHANGELOG.MD?',
-  },
 ];
 
-export default userDetails => async () => {
+export default async (userDetails) => {
   const getReleaseDetails = await prompt(updateLatestReleaseQuestions);
 
   const { repo, org } = getReleaseDetails;

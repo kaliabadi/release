@@ -13,11 +13,6 @@ const newReleaseQuestions = [
     message: 'Enter organisation or user for repository ...',
   },
   {
-    type: 'input',
-    name: 'version',
-    message: 'Enter version number ...',
-  },
-  {
     type: 'confirm',
     name: 'approved',
     message: 'Has this release been approved by the product owner?',
@@ -27,19 +22,13 @@ const newReleaseQuestions = [
     name: 'scheduled',
     message: 'What is the scheduled release time?',
   },
-  {
-    type: 'input',
-    name: 'changeLog',
-    message: 'What is the path to the project CHANGELOG.MD?',
-  },
 ];
 
-export default userDetails => async () => {
+export default async (userDetails) => {
   const getReleaseDetails = await prompt(newReleaseQuestions);
 
-  const { repo, org, changeLog } = getReleaseDetails;
+  const { repo, org } = getReleaseDetails; 
 
-  if (!changeLog) console.error('Please specify a change log file');
   if (!repo) console.error('Please specify repository');
   if (!org) console.error('Please specify organisation or user that owns the repository');
 

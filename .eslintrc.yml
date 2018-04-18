@@ -11,7 +11,7 @@ rules:
   comma-dangle: 0
   no-console: 0
   import/extensions: 0
-  import/no-unresolved: 0
+  import/no-unresolved: 2
   import/named: 2
   import/namespace: 2
   import/default: 2

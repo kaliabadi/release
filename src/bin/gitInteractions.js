@@ -1,5 +1,6 @@
 import request from 'superagent';
 import fs from 'fs';
+import mversion from 'mversion';
 import generateBodyContent from '../contentConstruction';
 
 const latestRelease = async (userDetails, { repo, org }) => {
@@ -23,42 +24,45 @@ const readFileAsString = (filePath) => {
   return undefined;
 };
 
-const newRelease = async (userDetails, {
-  repo, org, changeLog, version, approved, scheduled,
-}) => {
-  const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
-  const changeLogContents = readFileAsString(changeLog);
-  const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
+const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
+    const changeLogContents = readFileAsString('./CHANGELOG.md');
+    const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
+    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
+    const versionNumber = await new Promise((resolve) => {
+        mversion.get((err, data) => {
+            resolve(data['package.json']);
+        })
+    });
 
-  console.log(releaseBody);
+    if(!changeLogContents) console.log('❌ No changelog has been found! ❌')
 
-  const releaseDetails = {
-    tag_name: version,
-    target_commitish: 'master',
-    name: version,
-    body: changeLogContents,
-    draft: false,
-    prerelease: !approved,
-  };
+    const releaseDetails = {
+      "tag_name": versionNumber,
+      target_commitish: 'master',
+      "name": versionNumber,
+      body: releaseBody,
+      draft: false,
+      prerelease: !approved,
+    };
 
-  try {
-    const response = await request
-      .post(`https://api.github.com/repos/${org}/${repo}/releases`)
-      .set('Authorization', authDetails)
-      .send(releaseDetails);
-    return response.body;
-  } catch (error) {
-    console.error('Bad response from Github: ', error.response.body);
-    return { error };
-  }
+    try {
+      const response = await request
+        .post(`https://api.github.com/repos/${org}/${repo}/releases`)
+        .set('Authorization', authDetails)
+        .send(releaseDetails);
+      return response.body;
+    } catch (error) {
+      console.error('Bad response from Github: ', error.response.body);
+      return { error };
+    }
 };
 
 const updateRelease = async (userDetails, {
-  repo, org, approved, scheduled, changeLog,
+  repo, org, approved, scheduled,
 }) => {
   const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
   const latestReleaseResponse = await latestRelease(userDetails, { repo, org });
-  const changeLogContents = readFileAsString(changeLog);
+  const changeLogContents = readFileAsString('./CHANGELOG.md');
   const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
 
   try {

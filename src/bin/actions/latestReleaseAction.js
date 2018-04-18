@@ -13,7 +13,7 @@ const latestQuestions = [
   }
 ];
 
-export default (userDetails) => async() => {
+export default async (userDetails) => {
   const getReleaseDetails = await prompt(latestQuestions);
 
   const {org, repo} = getReleaseDetails;

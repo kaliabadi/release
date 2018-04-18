@@ -7,7 +7,9 @@
     },
     "dependencies": {
         "commander": "^2.15.1",
+        "generate-changelog": "^1.7.1",
         "inquirer": "^5.2.0",
+        "mversion": "^1.10.1",
         "superagent": "^3.8.2"
     },
     "devDependencies": {
@@ -24,7 +26,10 @@
         "lint": "./node_modules/.bin/eslint src/* --fix",
         "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
     },
-    "pre-commit": [ "precommit-msg", "lint" ],
+    "pre-commit": [
+        "precommit-msg",
+        "lint"
+    ],
     "author": "News UK & Ireland Ltd",
     "license": "BSD-3-Clause"
 }
