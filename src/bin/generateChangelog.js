@@ -11,6 +11,4 @@ const generateChangeLog = (version) => {
         });
 };
 
-module.exports = {
-    generateChangeLog
-}
+module.exports = generateChangeLog;
