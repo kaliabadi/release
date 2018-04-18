@@ -1,13 +1,22 @@
 {
     "name": "release",
     "version": "0.1.0",
+    "main": "lib/bin/run.js",
     "bin": {
-        "release": "bin/run.js"
+        "release": "lib/bin/run.js"
     },
     "dependencies": {
         "commander": "^2.15.1",
         "inquirer": "^5.2.0",
         "superagent": "^3.8.2"
+    },
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-preset-env": "^1.6.1"
+    },
+    "scripts": {
+        "build": "babel src -d lib",
+        "prepublish": "npm run build"
     },
     "author": "News UK & Ireland Ltd",
     "license": "BSD-3-Clause"
