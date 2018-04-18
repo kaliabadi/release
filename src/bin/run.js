@@ -20,25 +20,29 @@ const getUserDetails = () => validateUserDetails({
 program
     .version('0.1.0')
     .command('latest')
-    .action(latestReleaseAction(getUserDetails()));
+    .action(async () => {
+        await latestReleaseAction(getUserDetails())
+    });
 
 program
     .command('new')
     .option('-p, --patch', 'Release a patch version')
     .option('-m, --minor', 'Release a minor version')
     .option('-M, --major', 'Release a major version')
-    .action((options) => {
+    .action(async (options) => {
         const { patch, minor, major } = options
 
         if(patch) generateChangeLog('patch');
         if(minor) generateChangeLog('minor');
         if(major) generateChangeLog('major');
 
-        newReleaseAction(getUserDetails())
+        await newReleaseAction(getUserDetails())
     });
 
 program
     .command('update')
-    .action(updateReleaseAction(getUserDetails()));
+    .action(async () => {
+        updateReleaseAction(getUserDetails())
+    });
 
 program.parse(process.argv);

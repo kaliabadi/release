@@ -14,7 +14,7 @@ const latestQuestions = [
     }
 ];
 
-module.exports = (userDetails) => async() => {
+module.exports = async (userDetails) => {
     const getReleaseDetails = await prompt(latestQuestions);
 
     const { org, repo } = getReleaseDetails;

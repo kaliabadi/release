@@ -1,5 +1,6 @@
 import request from 'superagent';
 import fs from 'fs';
+import mversion from 'mversion';
 import { generateBodyContent } from '../contentConstruction';
 
 const latestRelease = async (userDetails, {repo, org}) => {
@@ -21,17 +22,22 @@ const readFileAsString = (file) => {
     }
 };
 
-const newRelease = async (userDetails, {repo, org, changeLog, version, approved, scheduled}) => {
+const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
-    const changeLogContents = readFileAsString(changeLog);
+    const changeLogContents = readFileAsString('./CHANGELOG.md');
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
+    const versionNumber = await new Promise((resolve) => {
+        mversion.get((err, data) => {
+            resolve(data['package.json']);
+        })
+    });
 
-    console.log(releaseBody)
+    if(!changeLogContents) console.log('❌ No changelog has been found! ❌')
 
-    var releaseDetails = {
-        "tag_name": version,
+    const releaseDetails = {
+        "tag_name": versionNumber,
         "target_commitish": "master",
-        "name": version,
+        "name": versionNumber,
         "body": changeLogContents,
         "draft": false,
         "prerelease": !approved
@@ -51,7 +57,7 @@ const newRelease = async (userDetails, {repo, org, changeLog, version, approved,
 const updateRelease = async (userDetails, {repo, org, approved, scheduled, changeLog}) => {
     const authDetails = 'Basic ' + new Buffer(`${userDetails.username}:${userDetails.accessToken}`).toString('base64');
     const latestReleaseResponse = await latestRelease(userDetails, {repo, org});
-    const changeLogContents = readFileAsString(changeLog);
+    const changeLogContents = readFileAsString('./CHANGELOG.md');
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents)
 
     try{
