@@ -12,11 +12,15 @@
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
-        "babel-preset-env": "^1.6.1"
+        "babel-preset-env": "^1.6.1",
+        "eslint": "^4.19.1",
+        "eslint-config-airbnb-base": "^12.1.0",
+        "eslint-plugin-import": "^2.11.0"
     },
     "scripts": {
         "build": "babel src -d lib",
-        "prepublish": "npm run build"
+        "prepublish": "npm run build",
+        "lint": "./node_modules/.bin/eslint src/* --fix"
     },
     "author": "News UK & Ireland Ltd",
     "license": "BSD-3-Clause"
