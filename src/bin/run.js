@@ -31,8 +31,8 @@ program
         const { patch, minor, major } = options
 
         if(patch) generateChangeLog('patch');
-        if(minor) generateChangeLog('patch');
-        if(major) generateChangeLog('patch');
+        if(minor) generateChangeLog('minor');
+        if(major) generateChangeLog('major');
 
         newReleaseAction(getUserDetails())
     });
