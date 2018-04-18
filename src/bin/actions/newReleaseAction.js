@@ -1,5 +1,5 @@
-const { newRelease } = require('../gitInteractions');
-const { prompt } = require('inquirer');
+import { prompt } from 'inquirer';
+import { newRelease } from '../gitInteractions';
 
 const newReleaseQuestions = [
     {
@@ -13,11 +13,6 @@ const newReleaseQuestions = [
         message : 'Enter organisation or user for repository ...'
     },
     {
-        type : 'input',
-        name : 'version',
-        message : 'Enter version number ...'
-    },
-    {
         type : 'confirm',
         name : 'approved',
         message : 'Has this release been approved by the product owner?'
@@ -26,20 +21,14 @@ const newReleaseQuestions = [
         type: 'input',
         name : 'scheduled',
         message: 'What is the scheduled release time?'
-    },
-    {
-        type: 'input',
-        name: 'changeLog',
-        message: 'What is the path to the project CHANGELOG.MD?'
     }
 ];
 
-module.exports = (userDetails) => async() => {
+module.exports = async (userDetails) => {
     const getReleaseDetails = await prompt(newReleaseQuestions);
 
-    const { repo, org, changeLog } = getReleaseDetails; 
+    const { repo, org } = getReleaseDetails; 
 
-    if(!changeLog) console.log('Please specify a change log file')
     if(!repo) console.log('Please specify repository');
     if(!org) console.log('Please specify organisation or user that owns the repository');
     

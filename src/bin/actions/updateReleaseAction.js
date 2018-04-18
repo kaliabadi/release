@@ -21,15 +21,10 @@ const updateLatestReleaseQuestions = [
         type: 'input',
         name : 'scheduled',
         message: 'What is the scheduled release time?'
-    },
-    {
-        type: 'input',
-        name: 'changeLog',
-        message: 'What is the path to the project CHANGELOG.MD?'
     }
 ];
 
-module.exports = (userDetails) => async () => {
+module.exports = async (userDetails) => {
     const getReleaseDetails = await prompt(updateLatestReleaseQuestions);
 
     const { repo, org } = getReleaseDetails; 
