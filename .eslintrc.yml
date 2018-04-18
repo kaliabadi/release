@@ -6,6 +6,11 @@ extends:
 
 plugins:
   - import
+  - mocha
+  - chai-friendly
+
+env:
+  mocha: true
 
 rules:
   comma-dangle: 0
