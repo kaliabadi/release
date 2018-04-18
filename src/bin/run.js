@@ -4,7 +4,7 @@ import program from 'commander';
 import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
-import { generateChangeLog } from './generateChangelog';
+import generateChangeLog from './generateChangelog';
 
 const validateUserDetails = (userDetails) => {
     if(!userDetails.username) throw 'Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username';
