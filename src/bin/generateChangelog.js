@@ -6,7 +6,7 @@ export default () => {
     gitTags.get((err, tags) => {
         const versionRange = tags[1] ? `${tags[1]}..${tags[0]}` : tags[0]; 
         
-        changeLog.generate({ patch: false }, { tag: versionRange})
+        changeLog.generate({ tag: versionRange.toString() })
         .then((changelog) => {
             fs.writeFileSync('./CHANGELOG.md', changelog);
         });
