@@ -72,19 +72,22 @@ const newRelease = async (userDetails, {approved, scheduled}) => {
   return api.newRelease(repoDetails, releaseDetails);
 };
 
-const updateRelease = async (userDetails, { approved, scheduled }) => {
+const updateRelease = async (userDetails, version, { approved, scheduled }) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
-  const latestRelease = await api.latestRelease(repoDetails);
+  const taggedRelease = await api.taggedRelease(repoDetails, version);
   const changeLogContents = readFileAsString('./CHANGELOG.md');
   const releaseDetails = { prerelease: !approved };
+
+  if(!taggedRelease) 
+    throw new Error('❌ No release found from that tag ❌');
 
   if(changeLogContents) {
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
     Object.assign(releaseDetails, { body: releaseBody });
   }
 
-  return await api.updateRelease(repoDetails, latestRelease.id, releaseDetails);
+  return await api.updateRelease(repoDetails, taggedRelease.id, releaseDetails);
 };
 
 export {

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import program from 'commander';
+import gitTags from 'git-tags';
 import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
@@ -20,22 +21,29 @@ const getUserDetails = () => validateUserDetails({
 program
   .version('0.1.0')
   .command('latest')
-    .action(async () => {
-        await latestReleaseAction(getUserDetails())
-    });
+  .action(async () => {
+    await latestReleaseAction(getUserDetails())
+  });
 
 program
   .command('new')
-    .action(async () => {
-        console.log('Remember to tag your commit with the release version first 🔖')
-        generateChangelog();
-        await newReleaseAction(getUserDetails())
-    });
+  .action(async () => {
+    console.log('Remember to tag your commit with the release version first 🔖')
+    generateChangelog();
+    await newReleaseAction(getUserDetails())
+  });
 
 program
-  .command('update')
-    .action(async () => {
-        await updateReleaseAction(getUserDetails())
-    });
+  .command('update') 
+  .option('-v, --versionTag', 'specify the version in your git tag')
+  .action(async (options) => {
+      gitTags.get((err, tags) => {
+        if (!(options instanceof String)) {
+          options = tags[0];
+        }
+
+        updateReleaseAction(getUserDetails(), options)    
+      })
+  });
 
 program.parse(process.argv);

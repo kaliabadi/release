@@ -14,9 +14,9 @@ const updateLatestReleaseQuestions = [
   },
 ];
 
-export default async (userDetails) => {
+export default async (userDetails, version) => {
   const getReleaseDetails = await prompt(updateLatestReleaseQuestions);
-  const updateReleaseResponse = await updateRelease(userDetails, getReleaseDetails);
+  const updateReleaseResponse = await updateRelease(userDetails, version, getReleaseDetails);
   const repoDetails = getOrgRepo();
 
   console.log(`The release notes for ${updateReleaseResponse.name} have been updated! \n` +

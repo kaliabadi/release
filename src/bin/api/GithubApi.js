@@ -15,6 +15,11 @@ export default class GithubApi {
         return githubRequest('get', path, null, this.userDetails);
     }
 
+    taggedRelease(repoDetails, tag) {
+        const path = `repos/${repoDetails}/releases/tags/${tag}`;
+        return githubRequest('get', path, null, this.userDetails);
+    }
+
     updateRelease(repoDetails, releaseId, releaseDetails) {
         const path = `repos/${repoDetails}/releases/${releaseId}`;
         return githubRequest('patch', path, releaseDetails, this.userDetails);
