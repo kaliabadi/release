@@ -1,7 +1,7 @@
-import request from 'superagent';
 import fs from 'fs';
 import gitTags from 'git-tags';
 import generateBodyContent from './contentConstruction';
+import GithubApi from './api/GithubApi';
 
 const readFileAsString = (filePath) => {
   if (filePath) {
@@ -14,28 +14,13 @@ const readFileAsString = (filePath) => {
   return undefined;
 };
 
-const githubRequest = async (path, httpMethod, releaseDetails, userDetails) => {
-  const authDetails = `Basic ${Buffer.from(`${userDetails.username}:${userDetails.accessToken}`).toString('base64')}`;
-  
-  try {
-    const response = await request[httpMethod](`https://api.github.com/${path}`)
-    .set('Authorization', authDetails)
-    .send(releaseDetails);
-    
-    return response.body;
-  } catch (error) {
-    console.error('Bad response from Github: ', error.response.body);
-    return { error };
-  }
-}
-
 const latestRelease = async (userDetails, { repo, org }) => {
-  const latestReleasePath = `repos/${org}/${repo}/releases/latest`;
-  return await githubRequest(latestReleasePath, 'get', '', userDetails);
+  const api = new GithubApi(userDetails);
+  return await api.latestRelease(org, repo);
 };
 
 const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
-  const newReleasePath = `repos/${org}/${repo}/releases`;
+  const api = new GithubApi(userDetails);  
   let changeLogContents = readFileAsString('./CHANGELOG.md');
   let releaseBody;
 
@@ -72,23 +57,23 @@ const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
     prerelease: !approved,
   };
 
-  return githubRequest(newReleasePath, 'post', releaseDetails, userDetails);
+  return api.newRelease(org, repo, releaseDetails);
 };
 
 const updateRelease = async (userDetails, {
   repo, org, approved, scheduled,
 }) => {
-  const latestReleaseResponse = await latestRelease(userDetails, { repo, org });
+  const api = new GithubApi(userDetails);
+  const latestRelease = await api.latestRelease(org, repo);
   const changeLogContents = readFileAsString('./CHANGELOG.md');
   const releaseDetails = { prerelease: !approved };
-  const updatePath = `repos/${org}/${repo}/releases/${latestReleaseResponse.id}`;
 
   if(changeLogContents) {
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
     Object.assign(releaseDetails, { body: releaseBody });
   }
-  
-  return githubRequest(updatePath, 'patch', releaseDetails, userDetails)
+
+  return await api.updateRelease(org, repo, latestRelease.id, releaseDetails);
 };
 
 export {
