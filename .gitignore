@@ -11,4 +11,7 @@ lib
 
 # test
 .nyc_output
+coverage
 
+# other
+.DS_Store
