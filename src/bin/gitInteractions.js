@@ -3,13 +3,6 @@ import fs from 'fs';
 import gitTags from 'git-tags';
 import generateBodyContent from './contentConstruction';
 
-const latestRelease = async (userDetails, { repo, org }) => {
-  const latestReleasePath = `repos/${org}/${repo}/releases/latest`;
-  const response = await githubRequest(latestReleasePath, 'get', '', userDetails);
-  
-  return response.body;
-};
-
 const readFileAsString = (filePath) => {
   if (filePath) {
     try {
@@ -26,8 +19,8 @@ const githubRequest = async (path, httpMethod, releaseDetails, userDetails) => {
   
   try {
     const response = await request[httpMethod](`https://api.github.com/${path}`)
-      .set('Authorization', authDetails)
-      .send(releaseDetails);
+    .set('Authorization', authDetails)
+    .send(releaseDetails);
     
     return response.body;
   } catch (error) {
@@ -35,6 +28,11 @@ const githubRequest = async (path, httpMethod, releaseDetails, userDetails) => {
     return { error };
   }
 }
+
+const latestRelease = async (userDetails, { repo, org }) => {
+  const latestReleasePath = `repos/${org}/${repo}/releases/latest`;
+  return await githubRequest(latestReleasePath, 'get', '', userDetails);
+};
 
 const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
   const newReleasePath = `repos/${org}/${repo}/releases`;
@@ -74,7 +72,7 @@ const newRelease = async (userDetails, {repo, org, approved, scheduled}) => {
     prerelease: !approved,
   };
 
-  githubRequest(newReleasePath, 'post', releaseDetails, userDetails);
+  return githubRequest(newReleasePath, 'post', releaseDetails, userDetails);
 };
 
 const updateRelease = async (userDetails, {
@@ -83,14 +81,14 @@ const updateRelease = async (userDetails, {
   const latestReleaseResponse = await latestRelease(userDetails, { repo, org });
   const changeLogContents = readFileAsString('./CHANGELOG.md');
   const releaseDetails = { prerelease: !approved };
-  const updatePath = `/repos/${org}/${repo}/releases/${latestReleaseResponse.id}`;
+  const updatePath = `repos/${org}/${repo}/releases/${latestReleaseResponse.id}`;
 
   if(changeLogContents) {
     const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
     Object.assign(releaseDetails, { body: releaseBody });
   }
-    
-  githubRequest(updatePath, 'patch', releaseDetails, userDetails)
+  
+  return githubRequest(updatePath, 'patch', releaseDetails, userDetails)
 };
 
 export {
