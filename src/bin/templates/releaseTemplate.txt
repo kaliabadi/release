@@ -1,0 +1,7 @@
+##scheduledContent
+
+This release has been approved by the PO: ##approved
+
+------------------------------------------------------------------------------------
+
+##changeLogContents
