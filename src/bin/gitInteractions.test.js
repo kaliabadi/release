@@ -4,7 +4,6 @@ import sinonChai from 'sinon-chai';
 import {latestRelease} from './gitInteractions';
 import GithubApi from './api/GithubApi';
 
-chai.should();
 chai.use(sinonChai);
 
 describe('gitInteractions', () => {

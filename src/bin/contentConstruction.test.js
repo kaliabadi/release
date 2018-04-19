@@ -1,4 +1,3 @@
-import 'chai/register-should';
 import fs from 'fs';
 import contentConstruction from './contentConstruction';
 
