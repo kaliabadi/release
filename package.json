@@ -23,14 +23,21 @@
         "eslint-plugin-import": "^2.11.0",
         "eslint-plugin-mocha": "^5.0.0",
         "mocha": "^5.1.0",
+        "nyc": "^11.7.1",
         "pre-commit": "^1.2.2"
     },
     "scripts": {
         "build": "babel src -d lib",
         "lint": "./node_modules/.bin/eslint src/* --fix",
-        "test": "mocha --require babel-core/register src/**/*.test.js",
+        "test": "nyc mocha --require babel-core/register src/**/*.test.js",
         "prepublish": "npm run build",
         "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
+    },
+    "nyc": {
+        "all": true,
+        "include": [
+            "src/**/*.js"
+        ]
     },
     "pre-commit": [
         "precommit-msg",
