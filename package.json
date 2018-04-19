@@ -10,6 +10,7 @@
         "generate-changelog": "^1.7.1",
         "git-tags": "^0.2.4",
         "inquirer": "^5.2.0",
+        "remote-origin-url": "^1.0.0",
         "superagent": "^3.8.2"
     },
     "devDependencies": {

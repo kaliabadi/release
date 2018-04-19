@@ -10,18 +10,18 @@ export default class GithubApi {
         return this._userDetails;
     }
 
-    latestRelease(org, repo) {
-        const path = `repos/${org}/${repo}/releases/latest`;
+    latestRelease(repoDetails) {
+        const path = `repos/${repoDetails}/releases/latest`;
         return githubRequest('get', path, null, this.userDetails);
     }
 
-    updateRelease(org, repo, releaseId, releaseDetails) {
-        const path = `repos/${org}/${repo}/releases/${releaseId}`;
+    updateRelease(repoDetails, releaseId, releaseDetails) {
+        const path = `repos/${repoDetails}/releases/${releaseId}`;
         return githubRequest('patch', path, releaseDetails, this.userDetails);
     }
 
-    newRelease(org, repo, releaseDetails) {
-        const path = `repos/${org}/${repo}/releases`;
+    newRelease(repoDetails, releaseDetails) {
+        const path = `repos/${repoDetails}/releases`;
         return githubRequest('post', path, releaseDetails, this.userDetails);
     }
 
