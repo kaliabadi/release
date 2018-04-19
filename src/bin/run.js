@@ -4,7 +4,6 @@ import program from 'commander';
 import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
-import generateChangeLog from './generateChangelog';
 import generateChangelog from './generateChangelog';
 
 const validateUserDetails = (userDetails) => {
@@ -28,6 +27,7 @@ program
 program
   .command('new')
     .action(async () => {
+        console.log('Remember to tag your commit with the release version first 🔖')
         generateChangelog();
         await newReleaseAction(getUserDetails())
     });
