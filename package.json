@@ -26,12 +26,13 @@
         "mocha": "^5.1.0",
         "nyc": "^11.7.1",
         "pre-commit": "^1.2.2",
-        "sinon": "^4.5.0"
+        "sinon": "^4.5.0",
+        "sinon-chai": "^3.0.0"
     },
     "scripts": {
         "build": "babel src -d lib",
         "lint": "./node_modules/.bin/eslint src/* --fix",
-        "test": "nyc mocha --require babel-core/register src/**/*.test.js",
+        "test": "nyc mocha -r chai/register-should --require babel-core/register src/**/*.test.js",
         "prepublish": "npm run build",
         "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
     },
