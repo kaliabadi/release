@@ -3,7 +3,7 @@ import contentConstruction from './contentConstruction';
 
 describe('contentConstruction', () => {
 
-    it('should return a expected content', () => {
+    it('should return the expected content', () => {
         const expectedContent = fs.readFileSync('./src/bin/templates/expectedTemplate.test.txt').toString();
         const scheduled = '13:00 18th April 2018';
         const approved = true;
