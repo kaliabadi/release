@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import remoteOriginUrl from 'remote-origin-url';
-import {latestRelease, updateRelease } from './gitInteractions';
+import { latestRelease, updateRelease } from './gitInteractions';
 import GithubApi from './api/GithubApi';
 import File from './utils/File';
 
@@ -46,7 +46,7 @@ describe('gitInteractions', () => {
             const prerelease = !approved;
             const expectedTaggedRelease = 101101;
             const expectedApiReleaseDetails = {
-                prerelease: false,
+                prerelease,
                 body: `${scheduled}\n\n` + 
                 `This release has been approved by the PO: ${approved}\n\n` + 
                 '------------------------------------------------------------------------------------\n\n' + 
@@ -71,6 +71,58 @@ describe('gitInteractions', () => {
             taggedReleaseStub.should.have.been.calledWith(orgRepo, expectedVersion);
             updateReleaseStub.should.have.been.calledWithMatch(orgRepo, expectedTaggedRelease, expectedApiReleaseDetails); 
             updateResponse.should.equal(expectedUpdateResponse);
+        });
+
+        it('should update a release without a changelog', async () => {
+            // Setup.
+            const expectedVersion = 'v1.0.5';
+            const approved = true;
+            const scheduled = '20th April 2018';
+            const prerelease = !approved;
+            const expectedTaggedRelease = 101101;
+            const changelog = undefined;
+            const expectedApiReleaseDetails = {
+                prerelease,
+            }
+            const expectedUpdateResponse = {
+                author: {
+                    login: 'tools',
+                },
+                prerelease,
+            };
+
+            sandbox.stub(File.prototype, 'asString').get(() => changelog);            
+            const taggedReleaseStub = sandbox.stub(GithubApi.prototype, 'taggedRelease').resolves({id: expectedTaggedRelease});
+            const updateReleaseStub = sandbox.stub(GithubApi.prototype, 'updateRelease').resolves(expectedUpdateResponse);
+
+            // Exercise.
+            const updateResponse = await updateRelease(userDetails, expectedVersion, {approved, scheduled});
+
+            // Verify.
+            taggedReleaseStub.should.have.been.calledWith(orgRepo, expectedVersion);
+            updateReleaseStub.should.have.been.calledWithMatch(orgRepo, expectedTaggedRelease, expectedApiReleaseDetails); 
+            updateResponse.should.equal(expectedUpdateResponse);
+        });
+
+        it('should throw an error if no tagged release was found', async () => {
+            // Setup.
+            const expectedVersion = 'v1.0.5';
+            const approved = true;
+            const scheduled = '20th April 2018';
+            const changeLog = "I am a change log file."             
+
+            sandbox.stub(File.prototype, 'asString').get(() => changeLog);            
+            sandbox.stub(GithubApi.prototype, 'taggedRelease').returns('');
+
+            // Exercise.
+            let expectedError = undefined;
+            try{
+                await updateRelease(userDetails, expectedVersion, {approved, scheduled});
+            }catch (err) {
+                expectedError = err;
+            }
+
+            expectedError.should.be.an('Error');
         });
 
     });
