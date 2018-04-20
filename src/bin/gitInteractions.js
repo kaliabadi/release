@@ -29,7 +29,7 @@ const latestRelease = async (userDetails) => {
   return await api.latestRelease(repoDetails);
 };
 
-const newRelease = async (userDetails, {approved, scheduled}) => {
+const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
   const api = new GithubApi(userDetails);  
   let changeLogContents = readFileAsString('./CHANGELOG.md');
   let releaseBody;
@@ -53,7 +53,7 @@ const newRelease = async (userDetails, {approved, scheduled}) => {
     console.error('❌ No version number found, please update your commit with a git tag ❌')
 
   if(changeLogContents && versionNumber) {
-    releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
+    releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
   } else {
     throw new Error('❌ missing version number or changelog, please check you have tagged your content correctly ❌');
   }
@@ -72,7 +72,7 @@ const newRelease = async (userDetails, {approved, scheduled}) => {
   return api.newRelease(repoDetails, releaseDetails);
 };
 
-const updateRelease = async (userDetails, version, { approved, scheduled }) => {
+const updateRelease = async (userDetails, version, { approved, scheduled, freeText }) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
@@ -83,7 +83,7 @@ const updateRelease = async (userDetails, version, { approved, scheduled }) => {
     throw new Error('❌ No release found from that tag ❌');
 
   if(changeLogContents) {
-    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents);
+    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
     Object.assign(releaseDetails, { body: releaseBody });
   }
 
