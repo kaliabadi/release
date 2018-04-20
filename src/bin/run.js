@@ -33,7 +33,7 @@ program
   });
 
 program
-  .command('update')
+  .command('update') 
   .option('-v, --versionTag', 'specify the version in your git tag')
   .action(async (options) => {
     await updateReleaseAction(getUserDetails(), options);

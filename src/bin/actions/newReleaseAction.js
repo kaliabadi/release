@@ -12,6 +12,11 @@ const newReleaseQuestions = [
     name: 'scheduled',
     message: 'What is the scheduled release time?',
   },
+  {
+    type: 'input',
+    name: 'freeText',
+    message: 'Is there anything else you want to add in the release documentation?',
+  }
 ];
 
 export default async (userDetails) => {
