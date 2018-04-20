@@ -58,7 +58,7 @@ const newRelease = async (userDetails, {approved, scheduled}) => {
 
   const repoDetails = getOrgRepo();
 
-  return api.newRelease(repoDetails, releaseDetails);
+  return await api.newRelease(repoDetails, releaseDetails);
 };
 
 const updateRelease = async (userDetails, version, { approved, scheduled }) => {
