@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import program from 'commander';
-import gitTags from 'git-tags';
 import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
@@ -20,7 +19,7 @@ const getUserDetails = () => validateUserDetails({
 
 program
   .version('0.1.0')
-  .command('latest')
+  .command('latest-released')
   .action(async () => {
     await latestReleaseAction(getUserDetails())
   });
@@ -34,16 +33,10 @@ program
   });
 
 program
-  .command('update') 
+  .command('update')
   .option('-v, --versionTag', 'specify the version in your git tag')
   .action(async (options) => {
-      gitTags.get((err, tags) => {
-        if (!(options instanceof String)) {
-          options = tags[0];
-        }
-
-        updateReleaseAction(getUserDetails(), options)    
-      })
+    await updateReleaseAction(getUserDetails(), options);
   });
 
 program.parse(process.argv);

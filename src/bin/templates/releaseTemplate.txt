@@ -1,4 +1,4 @@
-##scheduledContent
+Release is scheduled for: ##scheduledContent
 
 This release has been approved by the PO: ##approved
 
