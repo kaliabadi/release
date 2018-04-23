@@ -1,8 +1,8 @@
-import fs from 'fs';
 import gitTags from 'git-tags';
 import remoteOriginUrl from 'remote-origin-url';
 import generateBodyContent from './contentConstruction';
 import GithubApi from './api/GithubApi';
+import File from './utils/File';
 
 const getOrgRepo = () => {
   const fullUrl = remoteOriginUrl.sync();
@@ -12,17 +12,6 @@ const getOrgRepo = () => {
   return trimmedUrl
 }
 
-const readFileAsString = (filePath) => {
-  if (filePath) {
-    try {
-      return fs.readFileSync(filePath, 'utf8').toString();
-    } catch (err) {
-      console.error(`Failed to read the file: ${filePath}, Error: `, err);
-    }
-  }
-  return undefined;
-};
-
 const latestRelease = async (userDetails) => {
   const repoDetails = getOrgRepo();
   const api = new GithubApi(userDetails);
@@ -31,7 +20,7 @@ const latestRelease = async (userDetails) => {
 
 const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
   const api = new GithubApi(userDetails);  
-  let changeLogContents = readFileAsString('./CHANGELOG.md');
+  let changeLogContents = new File('./CHANGELOG.md').asString;
   let releaseBody;
 
   const versionNumber = await new Promise((resolve) => {
@@ -44,13 +33,9 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
     })
   });
 
-  if(!changeLogContents) {
-    console.log('❌ No changelog has been found! ❌')
-    changeLogContents = 'NO CHANGES FOUND';
-  }
+  if(!changeLogContents) console.log('❌ No changelog has been found! ❌');
 
-  if(!versionNumber)
-    console.error('❌ No version number found, please update your commit with a git tag ❌')
+  if(!versionNumber) console.error('❌ No version number found, please update your commit with a git tag ❌')
 
   if(changeLogContents && versionNumber) {
     releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
@@ -69,14 +54,14 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
 
   const repoDetails = getOrgRepo();
 
-  return api.newRelease(repoDetails, releaseDetails);
+  return await api.newRelease(repoDetails, releaseDetails);
 };
 
 const updateRelease = async (userDetails, version, { approved, scheduled, freeText }) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
-  const changeLogContents = readFileAsString('./CHANGELOG.md');
+  const changeLogContents = new File('./CHANGELOG.md').asString;
   const releaseDetails = { prerelease: !approved };
 
   if(!taggedRelease) 
