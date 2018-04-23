@@ -23,13 +23,14 @@ const newRelease = async (userDetails, {approved, scheduled}) => {
   const changeLogContents = new File('./CHANGELOG.md').asString;
   let releaseBody;
 
-  const versionNumber = await new Promise((resolve) => {
+  const versionNumber = await new Promise((resolve, reject) => {
     gitTags.get((err, tags) => {
-      if (err) throw err;
-      if(!tags) 
-        console.log('You have not tagged your commit with the release version!')
-
-      resolve(tags[0]);
+      if (err){
+        reject(err);
+      } else {
+        if(!tags || tags.length === 0) console.error('You have not tagged your commit with the release version!')
+        resolve(tags[0]);
+      }
     })
   });
 
