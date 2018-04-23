@@ -127,4 +127,35 @@ describe('GithubApi', () => {
 
     });
 
+    describe('newRelease', () => {
+
+        it('should return a valid response', async () => {
+            // Setup.
+            const expectedBody = {name: '1.2.3'};
+            const expectedReleaseDetails = '*release content details*'
+            sandbox.stub(request, 'post').returns(goodRequestMock(expectedBody));
+
+            // Exercise.
+            const response = await api.newRelease(repoDetails, expectedReleaseDetails);
+
+            // Verify.
+            request.post.should.be.calledWith(`https://api.github.com/repos/${repoDetails}/releases`);
+            request.post().set.should.be.calledWith('Authorization', 'Basic dG9vbHM6aGFtbWVy');
+            request.post().set().send.should.be.calledWith(expectedReleaseDetails);
+            response.should.deep.equal(expectedBody);
+        });
+
+        it('should return an error', async () => {
+            // Setup.
+            sandbox.stub(request, 'post').returns(badRequestMock());
+
+            // Exercise.
+            const response = await api.newRelease(repoDetails, '*release content details*');
+
+            // Verify.
+            should.exist(response.error);
+        });
+
+    });
+
 });
