@@ -7,6 +7,6 @@ export default (scheduled, approved, changelog, freeText) => {
   releaseContent = releaseContent.replace('##approved', approved);
   releaseContent = releaseContent.replace('##changeLogContents', changelog);
   releaseContent = releaseContent.replace('##freeText', freeText);
-  
+
   return releaseContent;
 }

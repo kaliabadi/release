@@ -18,8 +18,8 @@ const getUserDetails = () => validateUserDetails({
 });
 
 program
-  .version('0.1.0')
-  .command('latest-released')
+  .version('1.3.0')
+  .command('latest')
   .action(async () => {
     await latestReleaseAction(getUserDetails())
   });
