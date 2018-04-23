@@ -48,7 +48,7 @@ describe('GithubApi', () => {
             sandbox.stub(request, 'get').returns(goodRequestMock(expectedBody));
 
             // Exercise.
-            const response  = await api.latestRelease(repoDetails);
+            const response = await api.latestRelease(repoDetails);
 
             // Verify.
             request.get.should.be.calledWith(`https://api.github.com/repos/${repoDetails}/releases/latest`);
@@ -62,7 +62,39 @@ describe('GithubApi', () => {
             sandbox.stub(request, 'get').returns(badRequestMock());
 
             // Exercise.
-            const response  = await api.latestRelease(repoDetails);
+            const response = await api.latestRelease(repoDetails);
+
+            // Verify.
+            should.exist(response.error);
+        });
+
+    });
+
+    describe('taggedRelease', () => {
+
+        it('should return a valid response', async () => {
+            // Setup.
+            const api = new GithubApi(userDetails);
+            const expectedBody = {id: '1.2.3'};
+            const expectedTag = '1.2.3';
+            sandbox.stub(request, 'get').returns(goodRequestMock(expectedBody));
+
+            // Exercise.
+            const response = await api.taggedRelease(repoDetails, expectedTag);
+
+            // Verify.
+            request.get.should.be.calledWith(`https://api.github.com/repos/${repoDetails}/releases/tags/${expectedTag}`);
+            request.get().set.should.be.calledWith('Authorization', 'Basic dG9vbHM6aGFtbWVy');
+            response.should.deep.equal(expectedBody);
+        });
+
+        it('should return an error', async () => {
+            // Setup.
+            const api = new GithubApi(userDetails);
+            sandbox.stub(request, 'get').returns(badRequestMock());
+
+            // Exercise.
+            const response = await api.taggedRelease(repoDetails, '1.2.3');
 
             // Verify.
             should.exist(response.error);
