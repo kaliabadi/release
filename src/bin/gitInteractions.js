@@ -76,16 +76,16 @@ const taggedRelease = async (userDetails, version) => {
   editor.open('./tmp/taggedRelease.json');
 }
 
-const updateRelease = async (userDetails, version) => {
+const updateRelease = async (userDetails, version, released) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
-  const taggedReleaseContent = fs.readFileSync('./tmp/taggedRelease.json').toString();
+  const taggedReleaseContent = JSON.parse(fs.readFileSync('./tmp/taggedRelease.json'));
 
   if(!taggedRelease) 
     throw new Error('❌ No release found from that tag ❌');
   
-  const releaseDetails = { body: taggedReleaseContent };
+  const releaseDetails = { body: taggedReleaseContent,  prerelease: !released};
 
   return await api.updateRelease(repoDetails, taggedRelease.id, releaseDetails);
 };

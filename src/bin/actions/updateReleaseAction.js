@@ -2,7 +2,7 @@ import { prompt } from 'inquirer';
 import gitTags from 'git-tags';
 import { updateRelease, getOrgRepo, taggedRelease } from '../gitInteractions';
 
-export default async (userDetails, version) => {
+export default async (userDetails, {version, released} ) => {
   const repoDetails = getOrgRepo();
 
   if (!(version instanceof String)) {
@@ -12,7 +12,7 @@ export default async (userDetails, version) => {
   taggedRelease(userDetails, version);
   await prompt([ { type: 'confirm', name: 'postUpdate', message: 'have you completed updating the release notes?'}])
   
-  const updateReleaseResponse = updateRelease(userDetails, version);
+  const updateReleaseResponse = updateRelease(userDetails, version, released);
 
   console.log(`The release notes for ${updateReleaseResponse.name} have been updated! \n` +
         `You can see the new release notes here: https://github.com/${repoDetails}/releases`);
