@@ -1,8 +1,8 @@
 import gitTags from 'git-tags';
 import remoteOriginUrl from 'remote-origin-url';
-import generateBodyContent from './contentConstruction';
+import generateBodyContent from './../utils/contentConstruction';
 import GithubApi from './api/GithubApi';
-import File from './utils/File';
+import File from './../utils/File';
 
 const getOrgRepo = () => {
   const fullUrl = remoteOriginUrl.sync();

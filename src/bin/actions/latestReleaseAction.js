@@ -1,4 +1,4 @@
-import {latestRelease, getOrgRepo} from '../gitInteractions';
+import {latestRelease, getOrgRepo} from '../github/gitInteractions';
 
 
 export default async (userDetails) => {

@@ -1,6 +1,6 @@
 import { prompt } from 'inquirer';
 import gitTags from 'git-tags';
-import { updateRelease, getOrgRepo } from '../gitInteractions';
+import { updateRelease, getOrgRepo } from '../github/gitInteractions';
 
 const updateLatestReleaseQuestions = [
   {

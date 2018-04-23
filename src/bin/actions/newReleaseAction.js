@@ -1,6 +1,6 @@
 import { prompt } from 'inquirer';
-import { newRelease, getOrgRepo } from '../gitInteractions';
-import generateChangelog from '../generateChangelog';
+import { newRelease, getOrgRepo } from '../github/gitInteractions';
+import generateChangelog from '../utils/generateChangelog';
 
 const newReleaseQuestions = [
   {
