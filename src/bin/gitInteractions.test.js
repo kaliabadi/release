@@ -91,6 +91,30 @@ describe("gitInteractions", () => {
             );
             newReleaseResponse.should.equal(expectedNewReleaseResponse);
         });
+
+        it("should throw an error if no change log is found", async () => {
+            // Setup.
+            const approved = true;
+            const scheduled = "20th April 2018";
+            const expectedTag = '1.2.3';
+            const changeLog = undefined;
+
+            sandbox.stub(File.prototype, "asString").get(() => changeLog);
+            sandbox.stub(gitTags, 'get').callsArgWith(0, null, [expectedTag]);
+
+            // Exercise.
+            let expectedError = undefined;
+            try {
+                await newRelease(userDetails, {
+                    approved,
+                    scheduled
+                });
+            } catch (err) {
+                expectedError = err;
+            }
+
+            expectedError.should.be.an("Error");
+        });
     });
 
     describe("updateRelease", () => {

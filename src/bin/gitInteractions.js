@@ -33,13 +33,9 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
     })
   });
 
-  if(!changeLogContents) {
-    console.log('❌ No changelog has been found! ❌')
-    changeLogContents = 'NO CHANGES FOUND';
-  }
+  if(!changeLogContents) console.log('❌ No changelog has been found! ❌');
 
-  if(!versionNumber)
-    console.error('❌ No version number found, please update your commit with a git tag ❌')
+  if(!versionNumber) console.error('❌ No version number found, please update your commit with a git tag ❌')
 
   if(changeLogContents && versionNumber) {
     releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
