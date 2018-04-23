@@ -1,4 +1,5 @@
 import { prompt } from 'inquirer';
+import gitTags from 'git-tags';
 import { updateRelease, getOrgRepo } from '../gitInteractions';
 
 const updateLatestReleaseQuestions = [
@@ -15,8 +16,12 @@ const updateLatestReleaseQuestions = [
 ];
 
 export default async (userDetails, version) => {
+  const updateVersion = version ?
+    version :
+    await new Promise((resolve) => gitTags.get((err, tags) => resolve(tags[0])));
+
   const getReleaseDetails = await prompt(updateLatestReleaseQuestions);
-  const updateReleaseResponse = await updateRelease(userDetails, version, getReleaseDetails);
+  const updateReleaseResponse = await updateRelease(userDetails, updateVersion, getReleaseDetails);
   const repoDetails = getOrgRepo();
 
   console.log(`The release notes for ${updateReleaseResponse.name} have been updated! \n` +

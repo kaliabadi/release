@@ -20,7 +20,7 @@ const latestRelease = async (userDetails) => {
 
 const newRelease = async (userDetails, {approved, scheduled}) => {
   const api = new GithubApi(userDetails);  
-  let changeLogContents = new File('./CHANGELOG.md').asString;
+  const changeLogContents = new File('./CHANGELOG.md').asString;
   let releaseBody;
 
   const versionNumber = await new Promise((resolve) => {

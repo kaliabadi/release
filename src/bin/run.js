@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
 import program from 'commander';
-import gitTags from 'git-tags';
 import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
-import generateChangelog from './generateChangelog';
 
 const validateUserDetails = (userDetails) => {
   if (!userDetails.username) throw new Error('Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username');
@@ -21,29 +19,18 @@ const getUserDetails = () => validateUserDetails({
 program
   .version('0.1.0')
   .command('latest')
-  .action(async () => {
-    await latestReleaseAction(getUserDetails())
-  });
+  .action(async () => await latestReleaseAction(getUserDetails()));
 
 program
   .command('new')
-  .action(async () => {
-    console.log('Remember to tag your commit with the release version first 🔖')
-    generateChangelog();
-    await newReleaseAction(getUserDetails())
-  });
+  .action(async () => await newReleaseAction(getUserDetails()));
 
 program
   .command('update') 
   .option('-v, --versionTag', 'specify the version in your git tag')
   .action(async (options) => {
-      gitTags.get((err, tags) => {
-        if (!(options instanceof String)) {
-          options = tags[0];
-        }
-
-        updateReleaseAction(getUserDetails(), options)    
-      })
+    const version = options.constructor === String ? options : undefined;
+    await updateReleaseAction(getUserDetails(), version);    
   });
 
 program.parse(process.argv);
