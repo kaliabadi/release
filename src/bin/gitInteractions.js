@@ -1,3 +1,4 @@
+import fs from 'fs';
 import gitTags from 'git-tags';
 import remoteOriginUrl from 'remote-origin-url';
 import generateBodyContent from './contentConstruction';
@@ -20,7 +21,7 @@ const latestRelease = async (userDetails) => {
 
 const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
   const api = new GithubApi(userDetails);  
-  let changeLogContents = new File('./CHANGELOG.md').asString;
+  const changeLogContents = new File('./CHANGELOG.md').asString;
   let releaseBody;
 
   const versionNumber = await new Promise((resolve) => {
@@ -57,20 +58,34 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
   return await api.newRelease(repoDetails, releaseDetails);
 };
 
-const updateRelease = async (userDetails, version, { approved, scheduled, freeText }) => {
+const taggedRelease = async (userDetails, version) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
-  const changeLogContents = new File('./CHANGELOG.md').asString;
-  const releaseDetails = { prerelease: !approved };
 
   if(!taggedRelease) 
     throw new Error('❌ No release found from that tag ❌');
 
-  if(changeLogContents) {
-    const releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
-    Object.assign(releaseDetails, { body: releaseBody });
-  }
+  fs.writeFileSync('./tmp/taggedRelease.json', JSON.stringify(taggedRelease.body));
+
+  var openInEditor = require('open-in-editor');
+  var editor = openInEditor.configure({
+    editor: 'vim'
+  });
+
+  editor.open('./tmp/taggedRelease.json');
+}
+
+const updateRelease = async (userDetails, version) => {
+  const api = new GithubApi(userDetails);
+  const repoDetails = getOrgRepo();
+  const taggedRelease = await api.taggedRelease(repoDetails, version);
+  const taggedReleaseContent = fs.readFileSync('./tmp/taggedRelease.json').toString();
+
+  if(!taggedRelease) 
+    throw new Error('❌ No release found from that tag ❌');
+  
+  const releaseDetails = { body: taggedReleaseContent };
 
   return await api.updateRelease(repoDetails, taggedRelease.id, releaseDetails);
 };
@@ -80,4 +95,5 @@ export {
   latestRelease,
   newRelease,
   updateRelease,
+  taggedRelease
 };
