@@ -35,6 +35,7 @@ program
 program
   .command('update') 
   .option('-v, --versionTag', 'specify the version in your git tag')
+  .option('-r, --release', 'update to be latest release')
   .action(async (options) => {
     await updateReleaseAction(getUserDetails(), options);
   });
