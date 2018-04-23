@@ -26,7 +26,8 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
 
   const versionNumber = await new Promise((resolve) => {
     gitTags.get((err, tags) => {
-      if (err) throw err;
+      if (err) 
+        throw err;
       if(!tags) 
         console.log('You have not tagged your commit with the release version!')
 
@@ -34,9 +35,14 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
     })
   });
 
-  if(!changeLogContents) console.log('❌ No changelog has been found! ❌');
+  if(!changeLogContents) 
+    console.log('❌ No changelog has been found! ❌');
 
-  if(!versionNumber) console.error('❌ No version number found, please update your commit with a git tag ❌')
+  if(!versionNumber)
+    console.error('❌ No version number found, please update your commit with a git tag ❌')
+
+  if(!freeText)
+    freeText = 'N/A';
 
   if(changeLogContents && versionNumber) {
     releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
