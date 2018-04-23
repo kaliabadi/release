@@ -28,17 +28,6 @@ describe('GithubApi', () => {
 
     afterEach(() => sandbox.restore());
 
-    it('should return the user`s details', () => {
-        // Setup.
-        const api = new GithubApi(userDetails);
-
-        // Exercise.
-        const response  = api.userDetails;
-
-        // Verify.
-        response.should.deep.equal(userDetails);
-    });
-
     describe('latestRelease', () => {
 
         it('should return a valid response', async () => {
