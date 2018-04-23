@@ -33,7 +33,7 @@ const newRelease = async (userDetails, {approved, scheduled}) => {
     })
   });
 
-  if(!changeLogContents) console.log('❌ No changelog has been found! ❌');
+  if(!changeLogContents) console.error('❌ No changelog has been found! ❌');
 
   if(!versionNumber) console.error('❌ No version number found, please update your commit with a git tag ❌')
 

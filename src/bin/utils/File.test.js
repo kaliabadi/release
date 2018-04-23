@@ -10,7 +10,10 @@ describe('File', () => {
 
     var sandbox;
 
-    beforeEach(() => sandbox = sinon.sandbox.create());
+    beforeEach(() => {
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(console, "error");
+    });
 
     afterEach(() => sandbox.restore());
 

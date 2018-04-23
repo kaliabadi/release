@@ -23,6 +23,7 @@ describe("gitInteractions", () => {
 
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
+        sandbox.stub(console, "error");        
         sandbox
             .stub(remoteOriginUrl, "sync")
             .returns(`git@github.com:${orgRepo}.git`);
