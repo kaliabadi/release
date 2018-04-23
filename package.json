@@ -32,7 +32,7 @@
     "scripts": {
         "build": "babel src -d lib",
         "lint": "./node_modules/.bin/eslint src/* --fix",
-        "test": "nyc mocha -r chai/register-should --require babel-core/register src/**/*.test.js",
+        "test": "nyc mocha -r chai/register-should --require babel-core/register './src/**/*.test.js'",
         "prepublish": "npm run build",
         "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
     },
