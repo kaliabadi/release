@@ -129,7 +129,7 @@ describe('gitInteractions', () => {
             const scheduled = '20th April 2018';
             const changeLog = 'I am a change log file.';
             const prerelease = !approved;
-            const expectedTaggedRelease = undefined;
+            const expectedTaggedRelease = 101101;
             const expectedUpdateResponse = {
                 author: {
                     login: 'tools'
@@ -139,6 +139,11 @@ describe('gitInteractions', () => {
             };
 
             sandbox.stub(File.prototype, 'asString').get(() => changeLog);
+            const taggedReleaseStub = sandbox
+                .stub(GithubApi.prototype, 'taggedRelease')
+                .resolves({
+                    id: expectedTaggedRelease
+                });
             const updateReleaseStub = sandbox
                 .stub(GithubApi.prototype, 'updateRelease')
                 .resolves(expectedUpdateResponse);
@@ -150,10 +155,8 @@ describe('gitInteractions', () => {
             });
 
             // Verify.
-            updateReleaseStub.should.have.been.calledWith(
-                orgRepo,
-                expectedTaggedRelease,
-            );
+            updateReleaseStub.should.have.been.calledWith(orgRepo, expectedTaggedRelease);
+            taggedReleaseStub.should.have.been.calledWith(orgRepo, expectedVersion);
             updateResponse.should.equal(expectedUpdateResponse);
         });
 
