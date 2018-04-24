@@ -27,7 +27,7 @@ export default async (userDetails) => {
   const getReleaseDetails = await prompt(newReleaseQuestions);
   const repoDetails = getOrgRepo();
 
-  await newRelease(userDetails, getReleaseDetails);
+  newRelease(userDetails, getReleaseDetails).catch((error) => console.error(error));
 
   console.log(`A new release has been publised! 🎉 \n` +
     `Go to https://github.com/${repoDetails}/releases to see the details`);

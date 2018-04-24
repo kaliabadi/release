@@ -30,11 +30,15 @@ program
     await newReleaseAction(getUserDetails())
   });
 
-
 program
   .command('update') 
-  .option('-v, --versionTag', 'specify the version in your git tag')
+  .option('-v, --versionTag [version]', 'specify the version in your git tag')
   .option('-r, --release', 'update to be latest release')
-  .action(async (options) => await updateReleaseAction(getUserDetails(), options));
+  .action(async (options) =>  {
+    const version = options.versionTag ? options.versionTag : undefined;
+    const release = options.release ? options.release : false;
+
+    await updateReleaseAction(getUserDetails(), version, release)
+  });
 
 program.parse(process.argv);

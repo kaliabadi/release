@@ -1,9 +1,14 @@
 import fs from 'fs';
 import gitTags from 'git-tags';
 import remoteOriginUrl from 'remote-origin-url';
+import openInEditor from 'open-in-editor';
 import generateBodyContent from '../utils/contentConstruction';
 import GithubApi from './api/GithubApi';
 import File from '../utils/File';
+
+const editor = openInEditor.configure({
+  editor: process.env.EDITOR || 'vim'
+});
 
 const getOrgRepo = () => {
   const fullUrl = remoteOriginUrl.sync();
@@ -24,19 +29,19 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
   const changeLogContents = new File('./CHANGELOG.md').asString;
   let releaseBody;
 
-  const versionNumber = await new Promise((resolve) => {
+  const versionNumber = await new Promise((resolve, reject) => {
     gitTags.get((err, tags) => {
       if (err) 
-        throw err;
-      if(!tags) 
-        console.log('You have not tagged your commit with the release version!')
+        reject(err);
+      if(!tags)
+        reject('You have not tagged your commit with the release version!')
 
       resolve(tags[0]);
     })
   });
 
   if(!changeLogContents) 
-    console.log('❌ No changelog has been found! ❌');
+    console.error('❌ No changelog has been found! ❌');
 
   if(!versionNumber)
     console.error('❌ No version number found, please update your commit with a git tag ❌')
@@ -73,12 +78,6 @@ const taggedRelease = async (userDetails, version) => {
     throw new Error('❌ No release found from that tag ❌');
 
   fs.writeFileSync('./tmp/taggedRelease.json', JSON.stringify(taggedRelease.body));
-
-  var openInEditor = require('open-in-editor');
-  var editor = openInEditor.configure({
-    editor: 'vim'
-  });
-
   editor.open('./tmp/taggedRelease.json');
 }
 
