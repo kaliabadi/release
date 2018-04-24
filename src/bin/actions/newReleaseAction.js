@@ -1,5 +1,6 @@
 import { prompt } from 'inquirer';
-import { newRelease, getOrgRepo } from '../gitInteractions';
+import { newRelease, getOrgRepo } from '../github/gitInteractions';
+import generateChangelog from '../utils/generateChangelog';
 
 const newReleaseQuestions = [
   {
@@ -20,6 +21,9 @@ const newReleaseQuestions = [
 ];
 
 export default async (userDetails) => {
+  console.log('Remember to tag your commit with the release version first 🔖')
+  generateChangelog();
+  
   const getReleaseDetails = await prompt(newReleaseQuestions);
   const repoDetails = getOrgRepo();
 

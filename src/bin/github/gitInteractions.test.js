@@ -9,7 +9,7 @@ import {
     updateRelease
 } from './gitInteractions';
 import GithubApi from './api/GithubApi';
-import File from './utils/File';
+import File from '../utils/File';
 
 chai.use(sinonChai);
 

@@ -4,7 +4,6 @@ import program from 'commander';
 import latestReleaseAction from './actions/latestReleaseAction';
 import newReleaseAction from './actions/newReleaseAction';
 import updateReleaseAction from './actions/updateReleaseAction';
-import generateChangelog from './generateChangelog';
 
 const validateUserDetails = (userDetails) => {
   if (!userDetails.username) throw new Error('Please set the variable GIT_USERNAME in your terminal. e.g export GIT_USERNAME=username');
@@ -28,17 +27,14 @@ program
   .command('new')
   .action(async () => {
     console.log('Remember to tag your commit with the release version first 🔖')
-    generateChangelog();
     await newReleaseAction(getUserDetails())
   });
+
 
 program
   .command('update') 
   .option('-v, --versionTag', 'specify the version in your git tag')
   .option('-r, --release', 'update to be latest release')
-  .action(async (options) => {
-    console.log(options.release)
-    await updateReleaseAction(getUserDetails(), options);
-  });
+  .action(async (options) => await updateReleaseAction(getUserDetails(), options));
 
 program.parse(process.argv);

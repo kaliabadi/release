@@ -1,6 +1,6 @@
 import { prompt } from 'inquirer';
 import gitTags from 'git-tags';
-import { updateRelease, getOrgRepo, taggedRelease } from '../gitInteractions';
+import { updateRelease, getOrgRepo, taggedRelease } from '../github/gitInteractions';
 
 export default async (userDetails, options ) => {
   console.log(options.release);

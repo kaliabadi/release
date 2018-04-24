@@ -18,7 +18,7 @@ export default class File {
                 console.error(`Failed to read the file: ${this.filePath}, Error: `, err);
             }
         }
-        return undefined;
+        return null;
     }
     
 }
