@@ -12,6 +12,9 @@ plugins:
 env:
   mocha: true
 
+globals:
+  should: false
+
 rules:
   comma-dangle: 0
   no-console: 0

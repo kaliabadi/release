@@ -1,17 +1,8 @@
 import { prompt } from 'inquirer';
-import { newRelease } from '../gitInteractions';
+import { newRelease, getOrgRepo } from '../github/gitInteractions';
+import generateChangelog from '../utils/generateChangelog';
 
 const newReleaseQuestions = [
-  {
-    type: 'input',
-    name: 'repo',
-    message: 'Enter repository name ...',
-  },
-  {
-    type: 'input',
-    name: 'org',
-    message: 'Enter organisation or user for repository ...',
-  },
   {
     type: 'confirm',
     name: 'approved',
@@ -25,15 +16,14 @@ const newReleaseQuestions = [
 ];
 
 export default async (userDetails) => {
+  console.log('Remember to tag your commit with the release version first 🔖')
+  generateChangelog();
+
   const getReleaseDetails = await prompt(newReleaseQuestions);
-
-  const { repo, org } = getReleaseDetails; 
-
-  if (!repo) console.error('Please specify repository');
-  if (!org) console.error('Please specify organisation or user that owns the repository');
+  const repoDetails = getOrgRepo();
 
   await newRelease(userDetails, getReleaseDetails);
 
   console.log(`A new release has been publised! 🎉 \n` +
-    `Go to https://github.com/${org}/${repo}/releases to see the details`);
+    `Go to https://github.com/${repoDetails}/releases to see the details`);
 };
