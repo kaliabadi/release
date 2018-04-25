@@ -56,9 +56,9 @@ const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
   }
   
   const releaseDetails = {
-    "tag_name": versionNumber,
+    'tag_name': versionNumber,
     target_commitish: 'master',
-    "name": versionNumber,
+    'name': versionNumber,
     body: releaseBody,
     draft: false,
     prerelease: !approved,
