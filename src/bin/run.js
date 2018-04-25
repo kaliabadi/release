@@ -17,20 +17,28 @@ const getUserDetails = () => validateUserDetails({
 });
 
 program
-  .version('0.1.0')
+  .version('1.3.0')
   .command('latest')
-  .action(async () => await latestReleaseAction(getUserDetails()));
+  .action(async () => {
+    await latestReleaseAction(getUserDetails())
+  });
 
 program
   .command('new')
-  .action(async () => await newReleaseAction(getUserDetails()));
+  .action(async () => {
+    console.log('Remember to tag your commit with the release version first 🔖')
+    await newReleaseAction(getUserDetails())
+  });
 
 program
   .command('update') 
-  .option('-v, --versionTag', 'specify the version in your git tag')
-  .action(async (options) => {
-    const version = options.constructor === String ? options : undefined;
-    await updateReleaseAction(getUserDetails(), version);    
+  .option('-v, --versionTag [version]', 'specify the version in your git tag')
+  .option('-r, --release', 'update to be latest release')
+  .action(async (options) =>  {
+    const version = options.versionTag ? options.versionTag : undefined;
+    const release = options.release ? options.release : false;
+
+    await updateReleaseAction(getUserDetails(), version, release)
   });
 
 program.parse(process.argv);

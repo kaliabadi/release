@@ -1,6 +1,8 @@
-13:00 18th April 2018
+Release is scheduled for: 13:00 18th April 2018
 
 This release has been approved by the PO: true
+
+Additonal release notes: Free Text
 
 ------------------------------------------------------------------------------------
 
