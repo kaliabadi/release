@@ -1,4 +1,4 @@
-import { latestRelease, getOrgRepo } from "../github/gitInteractions";
+import { latestRelease, getOrgRepo } from '../github/gitInteractions';
 
 export default async userDetails => {
   const repoDetails = getOrgRepo();
@@ -6,7 +6,7 @@ export default async userDetails => {
 
   if (latestReleaseResponse.error) {
     console.error(
-      "Failed to get the latest release version",
+      'Failed to get the latest release version',
       latestReleaseResponse.error
     );
   } else {

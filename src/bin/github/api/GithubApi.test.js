@@ -1,6 +1,6 @@
-import sinon from "sinon";
-import chai from "chai";
-import sinonChai from "sinon-chai";
+import sinon from 'sinon';
+import chai from 'chai';
+import sinonChai from 'sinon-chai';
 import request from 'superagent';
 import GithubApi from './GithubApi';
 
@@ -25,7 +25,7 @@ describe('GithubApi', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     api = new GithubApi(userDetails);
-    sandbox.stub(console, "error");
+    sandbox.stub(console, 'error');
     goodSendStub = (body) => sandbox.stub().returns(({body}));
     goodSetStub = (body) => sandbox.stub().returns({send: goodSendStub(body)});
     goodRequestMock = (body) => ({set: goodSetStub(body)});

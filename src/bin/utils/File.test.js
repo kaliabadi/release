@@ -1,6 +1,6 @@
-import sinon from "sinon";
-import chai from "chai";
-import sinonChai from "sinon-chai";
+import sinon from 'sinon';
+import chai from 'chai';
+import sinonChai from 'sinon-chai';
 import fs from 'fs';
 import File from './File';
 
@@ -12,7 +12,7 @@ describe('File', () => {
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    sandbox.stub(console, "error");
+    sandbox.stub(console, 'error');
   });
 
   afterEach(() => sandbox.restore());
