@@ -24,6 +24,6 @@ export default async (userDetails) => {
 
   await newRelease(userDetails, getReleaseDetails);
 
-  console.log(`A new release has been publised! 🎉 \n` +
+  console.log('A new release has been publised! 🎉 \n' +
     `Go to https://github.com/${repoDetails}/releases to see the details`);
 };
