@@ -10,30 +10,21 @@ export default class File {
   }
 
   get asString() {
-    if (this.filePath) {
-      try {
-        return fs.readFileSync(this.filePath, 'utf8').toString();
-      } catch (err) {
-        console.error(
-          `Failed to read the file: ${this.filePath}, Error: `,
-          err
-        );
-      }
+    try {
+      return fs.readFileSync(this.filePath, 'utf8').toString();
+    } catch (err) {
+      console.error(`Failed to read the file: ${this.filePath}, Error: `, err);
     }
     return null;
   }
 
   get asJson() {
-    if (this.filePath) {
-      try {
-        return JSON.parse(fs.readFileSync(this.filePath));
-      } catch (err) {
-        console.error(
-          `Failed to parse the file as JSON: ${this.filePath}`,
-          err
-        );
-      }
+    try {
+      return JSON.parse(fs.readFileSync(this.filePath));
+    } catch (err) {
+      console.error(`Failed to parse the file as JSON: ${this.filePath}`, err);
     }
+    return null;
   }
 
   write(contents) {
