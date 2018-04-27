@@ -29,9 +29,9 @@ export default class File {
 
   write(contents) {
     try {
-      if (this.filePath) fs.writeFileSync(this.filePath, contents);
+      fs.writeFileSync(this.filePath, contents);
     } catch (err) {
-      console.error(`Failed to write contents to the file: ${this.filePath}`);
+      throw new Error(`Failed to write contents to the file: ${this.filePath}, ${err}`);
     }
   }
 }

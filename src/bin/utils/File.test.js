@@ -48,7 +48,7 @@ describe('File', () => {
   describe('asJson', () => {
     it('should return the file as Json', () => {
       // Setup.
-      const expectedJson = {key: 'value'};
+      const expectedJson = { key: 'value' };
       sandbox
         .stub(fs, 'readFileSync')
         .returns(Buffer.from(JSON.stringify(expectedJson), 'utf8'));
@@ -71,6 +71,42 @@ describe('File', () => {
 
       // Verify.
       should.not.exist(fileJson);
+    });
+  });
+
+  describe('write', () => {
+    it('should write the file contents', () => {
+      // Setup.
+      const expectedPath = 'good/file/path';
+      const expectedContents = 'file contents';
+      const writeFileStub = sandbox.stub(fs, 'writeFileSync');
+      const goodFile = new File(expectedPath);
+
+      // Exercise.
+      goodFile.write(expectedContents);
+
+      // Verify.
+      writeFileStub.should.have.been.calledWith(expectedPath, expectedContents);
+    });
+
+    it('should throw an error if the file cannot be written', () => {
+      // Setup.
+      const expectedPath = 'bad/file/path';
+      const expectedContents = 'file contents';
+      sandbox.stub(fs, 'writeFileSync').throws('Unable to write file.');
+      const badFile = new File(expectedPath);
+
+      // Exercise.
+      let expectedError = undefined;
+
+      try {
+        badFile.write(expectedContents);
+      } catch (err) {
+        expectedError = err;
+      }
+
+      // Verify.
+      expectedError.should.be.an('Error');
     });
   });
 });
