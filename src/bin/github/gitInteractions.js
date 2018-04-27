@@ -1,14 +1,9 @@
-import fs from 'fs';
 import gitTags from 'git-tags';
 import remoteOriginUrl from 'remote-origin-url';
 import openInEditor from 'open-in-editor';
 import generateBodyContent from '../utils/contentConstruction';
 import GithubApi from './api/GithubApi';
 import File from '../utils/File';
-
-const editor = openInEditor.configure({
-  editor: process.env.EDITOR || 'vim'
-});
 
 const getOrgRepo = () => {
   const fullUrl = remoteOriginUrl.sync();
@@ -76,20 +71,20 @@ const taggedRelease = async (userDetails, version) => {
 
   if (!taggedRelease) throw new Error('❌ No release found from that tag ❌');
 
-  fs.writeFileSync(
-    './tmp/taggedRelease.json',
-    JSON.stringify(taggedRelease.body)
-  );
-  editor.open('./tmp/taggedRelease.json');
+  const tempReleaseFile = new File('./tmp/taggedRelease.json');
+  tempReleaseFile.write(JSON.stringify(taggedRelease.body));
+
+  const editor = openInEditor.configure({
+    editor: process.env.EDITOR || 'vim'
+  });
+  editor.open(tempReleaseFile.filePath);
 };
 
 const updateRelease = async (userDetails, version, released) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
-  const taggedReleaseContent = JSON.parse(
-    fs.readFileSync('./tmp/taggedRelease.json')
-  );
+  const taggedReleaseContent = new File('./tmp/taggedRelease.json').asJson;
 
   if (!taggedRelease) throw new Error('❌ No release found from that tag ❌');
 
