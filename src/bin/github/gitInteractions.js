@@ -15,53 +15,53 @@ const getOrgRepo = () => {
   let trimmedUrl = fullUrl.replace('git@github.com:', '');
   trimmedUrl = trimmedUrl.replace('.git', '');
 
-  return trimmedUrl
-}
+  return trimmedUrl;
+};
 
-const latestRelease = async (userDetails) => {
+const latestRelease = async userDetails => {
   const repoDetails = getOrgRepo();
   const api = new GithubApi(userDetails);
   return await api.latestRelease(repoDetails);
 };
 
-const newRelease = async (userDetails, {approved, scheduled, freeText}) => {
-  const api = new GithubApi(userDetails);  
+const newRelease = async (userDetails, { approved, scheduled, freeText }) => {
+  const api = new GithubApi(userDetails);
   const changeLogContents = new File('./CHANGELOG.md').asString;
   let releaseBody;
 
-  const versionNumber = await new Promise((resolve, reject) => {
-    gitTags.get((err, tags) => {
-      if (err) 
-        reject(err);
-      if(!tags)
-        reject('You have not tagged your commit with the release version!')
+  const versionNumber = await new Promise(resolve =>
+    gitTags.get((err, tags) => resolve(tags ? tags[0] : undefined))
+  );
 
-      resolve(tags[0]);
-    })
-  });
+  if (!changeLogContents) console.error('❌ No changelog has been found! ❌');
 
-  if(!changeLogContents) 
-    console.error('❌ No changelog has been found! ❌');
+  if (!versionNumber)
+    console.error(
+      '❌ No version number found, please update your commit with a git tag ❌'
+    );
 
-  if(!versionNumber)
-    console.error('❌ No version number found, please update your commit with a git tag ❌')
+  if (!freeText) freeText = 'N/A';
 
-  if(!freeText)
-    freeText = 'N/A';
-
-  if(changeLogContents && versionNumber) {
-    releaseBody = generateBodyContent(scheduled, approved, changeLogContents, freeText);
+  if (changeLogContents && versionNumber) {
+    releaseBody = generateBodyContent(
+      scheduled,
+      approved,
+      changeLogContents,
+      freeText
+    );
   } else {
-    throw new Error('❌ missing version number or changelog, please check you have tagged your content correctly ❌');
+    throw new Error(
+      '❌ missing version number or changelog, please check you have tagged your content correctly ❌'
+    );
   }
-  
+
   const releaseDetails = {
-    'tag_name': versionNumber,
+    tag_name: versionNumber,
     target_commitish: 'master',
-    'name': versionNumber,
+    name: versionNumber,
     body: releaseBody,
     draft: false,
-    prerelease: !approved,
+    prerelease: !approved
   };
 
   const repoDetails = getOrgRepo();
@@ -74,31 +74,28 @@ const taggedRelease = async (userDetails, version) => {
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
 
-  if(!taggedRelease) 
-    throw new Error('❌ No release found from that tag ❌');
+  if (!taggedRelease) throw new Error('❌ No release found from that tag ❌');
 
-  fs.writeFileSync('./tmp/taggedRelease.json', JSON.stringify(taggedRelease.body));
+  fs.writeFileSync(
+    './tmp/taggedRelease.json',
+    JSON.stringify(taggedRelease.body)
+  );
   editor.open('./tmp/taggedRelease.json');
-}
+};
 
 const updateRelease = async (userDetails, version, released) => {
   const api = new GithubApi(userDetails);
   const repoDetails = getOrgRepo();
   const taggedRelease = await api.taggedRelease(repoDetails, version);
-  const taggedReleaseContent = JSON.parse(fs.readFileSync('./tmp/taggedRelease.json'));
+  const taggedReleaseContent = JSON.parse(
+    fs.readFileSync('./tmp/taggedRelease.json')
+  );
 
-  if(!taggedRelease) 
-    throw new Error('❌ No release found from that tag ❌');
-  
-  const releaseDetails = { body: taggedReleaseContent,  prerelease: !released};
+  if (!taggedRelease) throw new Error('❌ No release found from that tag ❌');
+
+  const releaseDetails = { body: taggedReleaseContent, prerelease: !released };
 
   return await api.updateRelease(repoDetails, taggedRelease.id, releaseDetails);
 };
 
-export {
-  getOrgRepo,
-  latestRelease,
-  newRelease,
-  updateRelease,
-  taggedRelease
-};
+export { getOrgRepo, latestRelease, newRelease, updateRelease, taggedRelease };

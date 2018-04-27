@@ -26,6 +26,7 @@ describe('gitInteractions', () => {
     sandbox
       .stub(remoteOriginUrl, 'sync')
       .returns(`git@github.com:${orgRepo}.git`);
+    sandbox.stub(console, 'error');
   });
 
   afterEach(() => sandbox.restore());
@@ -119,6 +120,31 @@ describe('gitInteractions', () => {
 
       expectedError.should.be.an('Error');
     });
+
+    it('should throw an error if no version number is found', async () => {
+      // Setup.
+      const approved = true;
+      const scheduled = '20th April 2018';
+      const expectedTag = undefined;
+      const changeLog = 'I am a change log file.';
+
+      sandbox.stub(File.prototype, 'asString').get(() => changeLog);
+      sandbox.stub(gitTags, 'get').callsArgWith(0, null, expectedTag);
+
+      // Exercise.
+      let expectedError = undefined;
+      try {
+        await newRelease(userDetails, {
+          approved,
+          scheduled
+        });
+      } catch (err) {
+        expectedError = err;
+      }
+
+      expectedError.should.be.an('Error');
+    });
+
   });
 
   describe('updateRelease', () => {
