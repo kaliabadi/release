@@ -12,7 +12,7 @@ export default async (userDetails, version, release) => {
   taggedRelease(userDetails, version);
   await prompt([ { type: 'confirm', name: 'postUpdate', message: 'have you completed updating the release notes?'}])
 
-  const updateReleaseResponse = updateRelease(userDetails, version, release);
+  const updateReleaseResponse = await updateRelease(userDetails, version, release);
 
   console.log(`The release notes for ${updateReleaseResponse.name} have been updated! \n` +
         `You can see the new release notes here: https://github.com/${repoDetails}/releases`);

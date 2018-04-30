@@ -52,7 +52,7 @@ describe('newReleaseAction', () => {
     const repoDetails = 'tools/release';
     sandbox.stub(ChangeLog.prototype, 'create');
     sandbox.stub(gitInteractions, 'getOrgRepo').returns(repoDetails);
-    sandbox.stub(gitInteractions, 'newRelease').rejects(expectedError);
+    sandbox.stub(gitInteractions, 'newRelease').throws(expectedError);
     sandbox.stub(inquirer, 'prompt').resolves(releaseDetails);
 
     // Exercise.

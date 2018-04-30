@@ -34,9 +34,9 @@ describe('latestReleaseAction', () => {
     // Setup.
     const errorStub = sandbox.stub(console, 'error');
     const userDetails = {username: 'tools', accessKey: 'hammer'};
-    const expectedError = 'An error occurred.';
+    const expectedError = new Error('An error occurred.');
     sandbox.stub(gitInteractions, 'getOrgRepo').returns('tools/release');
-    sandbox.stub(gitInteractions, 'latestRelease').resolves({error: expectedError});
+    sandbox.stub(gitInteractions, 'latestRelease').throws(expectedError);
         
     // Exercise.
     await latestReleaseAction(userDetails);

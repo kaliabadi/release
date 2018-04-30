@@ -44,7 +44,6 @@ const githubRequest = async(httpMethod, path, releaseDetails, userDetails) => {
 
     return response.body;
   } catch (error) {
-    console.error('Bad response from Github: ', error.response.body);
-    return {error};
+    throw error.response.body;
   }
 }
