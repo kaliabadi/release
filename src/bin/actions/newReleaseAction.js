@@ -22,12 +22,12 @@ const newReleaseQuestions = [
 
 export default async (userDetails) => {
   console.log('Remember to tag your commit with the release version first 🔖')
-  generateChangelog();
+  await generateChangelog();
   
   const getReleaseDetails = await prompt(newReleaseQuestions);
   const repoDetails = getOrgRepo();
 
-  newRelease(userDetails, getReleaseDetails).catch((error) => console.error(error));
+  await newRelease(userDetails, getReleaseDetails).catch((error) => console.error(error));
 
   console.log('A new release has been publised! 🎉 \n' +
     `Go to https://github.com/${repoDetails}/releases to see the details`);
