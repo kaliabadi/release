@@ -44,6 +44,6 @@ const githubRequest = async(httpMethod, path, releaseDetails, userDetails) => {
 
     return response.body;
   } catch (error) {
-    throw error.response.body;
+    throw new Error(error.response.body);
   }
 }
