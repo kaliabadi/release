@@ -4,11 +4,11 @@ import sinonChai from 'sinon-chai';
 import fs from 'fs';
 import changeLog from 'generate-changelog';
 import gitTags from 'git-tags';
-import generateChangelog from './generateChangelog';
+import ChangeLog from './ChangeLog';
 
 chai.use(sinonChai);
 
-describe('generateChangelog', () => {
+describe('ChangeLog', () => {
   var sandbox;
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('generateChangelog', () => {
     const fsStub = sandbox.stub(fs, 'writeFileSync');
 
     // Exercise.
-    await generateChangelog();
+    await new ChangeLog('./CHANGELOG.md').create();
 
     // Verify.
     changeLogStub.should.have.been.calledWith({ tag: expectedTag });

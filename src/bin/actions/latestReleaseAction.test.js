@@ -32,7 +32,7 @@ describe('latestReleaseAction', () => {
 
   it('should log the unsuccessful action', async () => {
     // Setup.
-    const errorStub = sandbox.spy(console, 'error');        
+    const errorStub = sandbox.stub(console, 'error');
     const userDetails = {username: 'tools', accessKey: 'hammer'};
     const expectedError = 'An error occurred.';
     sandbox.stub(gitInteractions, 'getOrgRepo').returns('tools/release');
