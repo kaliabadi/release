@@ -3,10 +3,12 @@ import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import remoteOriginUrl from 'remote-origin-url';
 import gitTags from 'git-tags';
+import openInEditor from 'open-in-editor';
 import {
   latestRelease,
   newRelease,
-  updateRelease
+  updateRelease,
+  taggedRelease
 } from './gitInteractions';
 import GithubApi from './api/GithubApi';
 import File from '../utils/File';
@@ -26,19 +28,23 @@ describe('gitInteractions', () => {
     sandbox
       .stub(remoteOriginUrl, 'sync')
       .returns(`git@github.com:${orgRepo}.git`);
+    sandbox.stub(console, 'error');
   });
 
   afterEach(() => sandbox.restore());
 
   describe('latestRelease', () => {
     it('should return the latest release', async () => {
+      // Setup.
       const expectedVersion = 'v1.0.0';
       const apiStub = sandbox
         .stub(GithubApi.prototype, 'latestRelease')
         .resolves(expectedVersion);
 
+      // Exercise.
       const releaseVersion = await latestRelease(userDetails);
 
+      // Verify.
       releaseVersion.should.equal(expectedVersion);
       apiStub.should.have.been.calledWith(orgRepo);
     });
@@ -59,11 +65,12 @@ describe('gitInteractions', () => {
         name: expectedTag,
         draft: false,
         prerelease,
-        body: `Release is scheduled for: ${scheduled}\n\n` +
-                    `This release has been approved by the PO: ${approved}\n\n` +
-                    'Additonal release notes: N/A\n\n'+
-                    '------------------------------------------------------------------------------------\n\n' +
-                    `${changeLog}`
+        body:
+          `Release is scheduled for: ${scheduled}\n\n` +
+          `This release has been approved by the PO: ${approved}\n\n` +
+          'Additonal release notes: N/A\n\n' +
+          '------------------------------------------------------------------------------------\n\n' +
+          `${changeLog}`
       };
 
       const expectedNewReleaseResponse = {
@@ -117,6 +124,32 @@ describe('gitInteractions', () => {
         expectedError = err;
       }
 
+      // Verify.
+      expectedError.should.be.an('Error');
+    });
+
+    it('should throw an error if no version number is found', async () => {
+      // Setup.
+      const approved = true;
+      const scheduled = '20th April 2018';
+      const expectedTag = undefined;
+      const changeLog = 'I am a change log file.';
+
+      sandbox.stub(File.prototype, 'asString').get(() => changeLog);
+      sandbox.stub(gitTags, 'get').callsArgWith(0, null, expectedTag);
+
+      // Exercise.
+      let expectedError = undefined;
+      try {
+        await newRelease(userDetails, {
+          approved,
+          scheduled
+        });
+      } catch (err) {
+        expectedError = err;
+      }
+
+      // Verify.
       expectedError.should.be.an('Error');
     });
   });
@@ -155,7 +188,10 @@ describe('gitInteractions', () => {
       });
 
       // Verify.
-      updateReleaseStub.should.have.been.calledWith(orgRepo, expectedTaggedRelease);
+      updateReleaseStub.should.have.been.calledWith(
+        orgRepo,
+        expectedTaggedRelease
+      );
       taggedReleaseStub.should.have.been.calledWith(orgRepo, expectedVersion);
       updateResponse.should.equal(expectedUpdateResponse);
     });
@@ -186,7 +222,11 @@ describe('gitInteractions', () => {
         .resolves(expectedUpdateResponse);
 
       // Exercise.
-      const updateResponse = await updateRelease(userDetails, expectedVersion, approved);
+      const updateResponse = await updateRelease(
+        userDetails,
+        expectedVersion,
+        approved
+      );
 
       // Verify.
       taggedReleaseStub.should.have.been.calledWith(orgRepo, expectedVersion);
@@ -218,6 +258,59 @@ describe('gitInteractions', () => {
         expectedError = err;
       }
 
+      // Verify.
+      expectedError.should.be.an('Error');
+    });
+  });
+
+  describe('taggedRelease', () => {
+    it('should open the tagged release details in an editor', async () => {
+      // Setup.
+      const expectedVersion = 'v1.3.5';
+      const expectedTaggedReleaseResponse = {
+        id: 100,
+        tag_name: expectedVersion,
+        name: expectedVersion,
+        body: 'tomorrow\n\nThis release has been approved by the PO: true\n\nj'
+      };
+
+      const editorOpenStub = sandbox.stub();
+      sandbox.stub(openInEditor, 'configure').returns({ open: editorOpenStub });
+
+      sandbox.stub(File.prototype, 'write');
+      const taggedReleaseApiStub = sandbox
+        .stub(GithubApi.prototype, 'taggedRelease')
+        .resolves(expectedTaggedReleaseResponse);
+
+      // Exercise.
+      await taggedRelease(userDetails, expectedVersion);
+
+      // Verify.
+      taggedReleaseApiStub.should.have.been.calledWith(
+        orgRepo,
+        expectedVersion
+      );
+      editorOpenStub.should.have.been.calledOnce;
+    });
+
+    it('should throw an error if no tagged release was found', async () => {
+      // Setup.
+      const expectedVersion = 'v1.3.5';
+      const expectedTaggedReleaseResponse = undefined;
+
+      sandbox
+        .stub(GithubApi.prototype, 'taggedRelease')
+        .resolves(expectedTaggedReleaseResponse);
+
+      // Exercise.
+      let expectedError = undefined;
+      try {
+        await taggedRelease(userDetails, expectedVersion);
+      } catch (err) {
+        expectedError = err;
+      }
+
+      // Verify.
       expectedError.should.be.an('Error');
     });
   });
