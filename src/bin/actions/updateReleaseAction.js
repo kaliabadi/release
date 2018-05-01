@@ -9,7 +9,7 @@ import {
 export default async (userDetails, version, release) => {
   const repoDetails = getOrgRepo();
 
-  if (!(version instanceof String)) {
+  if (!version) {
     version = await new Promise(resolve =>
       gitTags.get((err, tags) => resolve(tags[0]))
     );
