@@ -1,4 +1,5 @@
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 
 export default class File {
   constructor(filePath) {
@@ -7,6 +8,10 @@ export default class File {
 
   get filePath() {
     return this._filePath;
+  }
+
+  get parentDirectories() {
+    return this.filePath.split('/').slice(0, -1).join('/');
   }
 
   get asString() {
@@ -29,9 +34,12 @@ export default class File {
 
   write(contents) {
     try {
+      mkdirp.sync(this.parentDirectories);
       fs.writeFileSync(this.filePath, contents);
     } catch (err) {
-      throw new Error(`Failed to write contents to the file: ${this.filePath}, ${err}`);
+      throw new Error(
+        `Failed to write contents to the file: ${this.filePath}, ${err}`
+      );
     }
   }
 }

@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 import File from './File';
 
 chai.use(sinonChai);
@@ -80,6 +81,7 @@ describe('File', () => {
       const expectedPath = 'good/file/path';
       const expectedContents = 'file contents';
       const writeFileStub = sandbox.stub(fs, 'writeFileSync');
+      sandbox.stub(mkdirp, 'sync');
       const goodFile = new File(expectedPath);
 
       // Exercise.
@@ -94,6 +96,7 @@ describe('File', () => {
       const expectedPath = 'bad/file/path';
       const expectedContents = 'file contents';
       sandbox.stub(fs, 'writeFileSync').throws('Unable to write file.');
+      sandbox.stub(mkdirp, 'sync');
       const badFile = new File(expectedPath);
 
       // Exercise.
