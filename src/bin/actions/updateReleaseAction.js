@@ -15,7 +15,7 @@ export default async (userDetails, version, release) => {
     );
   }
 
-  taggedRelease(userDetails, version);
+  await taggedRelease(userDetails, version);
   await prompt([
     {
       type: 'confirm',
