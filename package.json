@@ -10,6 +10,7 @@
     "generate-changelog": "^1.7.1",
     "git-tags": "^0.2.4",
     "inquirer": "^5.2.0",
+    "mkdirp": "^0.5.1",
     "open-in-editor": "^2.2.0",
     "remote-origin-url": "^1.0.0",
     "superagent": "^3.8.2"
@@ -33,21 +34,32 @@
   "scripts": {
     "build": "babel src -d lib",
     "lint": "./node_modules/.bin/eslint src/* --fix",
-    "test":
-      "nyc mocha -r chai/register-should --require babel-core/register './src/**/*.test.js'",
+    "test": "nyc mocha -r chai/register-should --require babel-core/register './src/**/*.test.js'",
     "prepare": "npm run build",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
   "nyc": {
-    "include": ["src/**/*.js"],
-    "exclude": ["src/**/*.test.js"],
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "src/**/*.test.js"
+    ],
     "sourceMap": true,
     "instrument": true,
-    "require": ["babel-register"],
+    "require": [
+      "babel-register"
+    ],
     "all": true,
-    "reporter": ["html", "text-summary"]
+    "reporter": [
+      "html",
+      "text-summary"
+    ]
   },
-  "pre-commit": ["precommit-msg", "lint"],
+  "pre-commit": [
+    "precommit-msg",
+    "lint"
+  ],
   "author": "News UK & Ireland Ltd",
   "license": "BSD-3-Clause"
 }
